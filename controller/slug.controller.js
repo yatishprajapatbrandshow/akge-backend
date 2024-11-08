@@ -37,7 +37,6 @@ function createPathFromTitle(title) {
 }
 
 const insert = async (req, res) => {
-    console.log("Entered insert");
 
     try {
         // Destructure the request body with default values
@@ -75,8 +74,6 @@ const insert = async (req, res) => {
 
         // Generate slug and path
         const slug = createPathFromTitle(name);
-        console.log(slug);
-
         let path;
         let parentSlugDoc;
         if (parent_id === 0) {
@@ -88,9 +85,7 @@ const insert = async (req, res) => {
             }
             path = `${parentSlugDoc.path}${slug}`; // Append slug to parent path
         }
-        console.log(parentSlugDoc);
-        
-        console.log(path);
+
 
         // Check if the slug already exists
         const existingSlug = await Slug.findOne({ slug });
@@ -105,7 +100,6 @@ const insert = async (req, res) => {
 
         // Prepare id_path
         let id_path = parentSlugDoc?.id_path ? `${parentSlugDoc?.id_path}/${page_id}` : `/${page_id}`;
-        console.log(id_path);
 
         // Create a new slug object
         const newSlug = new Slug({
@@ -389,11 +383,11 @@ const insert = async (req, res) => {
 
 
 const getParent = async (req, res) => {
-    console.log("Entered");
 
     const { query = "", page = 1, limit = 10 } = req.body; // page and limit are for pagination
-
-    try {
+  
+    
+    try {   
         // Calculate how many records to skip based on the current page and limit
         const skip = (page - 1) * limit;
 
@@ -430,7 +424,6 @@ const getParent = async (req, res) => {
                 parentId: 0
             });
         }
-        console.log(pages);
 
 
         // If no pages are found, respond with the default "This is parent page"

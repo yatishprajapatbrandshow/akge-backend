@@ -4,7 +4,6 @@ const generateUniqueId = require("../utils/generateSid");
 const addNewsAndEvents = async (req, res) => {
   try {
     const {
-      sid = 0,
       title,
       shortDesc,
       description,
@@ -16,7 +15,6 @@ const addNewsAndEvents = async (req, res) => {
       type,
       tags,
       relatedLinks,
-      status,
     } = req.body;
 
     const missingFields = [];
@@ -31,25 +29,24 @@ const addNewsAndEvents = async (req, res) => {
     if (!type) missingFields.push("Type");
     if (!tags) missingFields.push("Tags");
     if (!relatedLinks) missingFields.push("Related Links");
+
     const typeArray = ["circuler", "article", "news", "event"];
     const featuredArray = ["Yes", "No"];
-    if (type) {
-      if (!typeArray.includes(type)) {
-        return res.status(400).json({
-          status: false,
-          message: "Type value is must be : " + typeArray.join("/"),
-          data: false,
-        });
-      }
+
+    if (type && !typeArray.includes(type)) {
+      return res.status(400).json({
+        status: false,
+        message: "Type value must be one of: " + typeArray.join("/"),
+        data: false,
+      });
     }
-    if (featured) {
-      if (!featuredArray.includes(featured)) {
-        return res.status(400).json({
-          status: false,
-          message: "Featured value is must be : " + featuredArray.join("/"),
-          data: false,
-        });
-      }
+
+    if (featured && !featuredArray.includes(featured)) {
+      return res.status(400).json({
+        status: false,
+        message: "Featured value must be one of: " + featuredArray.join("/"),
+        data: false,
+      });
     }
 
     if (missingFields.length) {
@@ -62,35 +59,26 @@ const addNewsAndEvents = async (req, res) => {
       });
     }
 
-    // Check if the news/event entry already exists by pageUrl (or another unique identifier)
-    const existingNews = await NewsAndEvents.findOne({ sid });
-
+    // Check if a news/event with the same pageUrl already exists
+    const existingNews = await NewsAndEvents.findOne({
+      type,
+      title,
+      status: true,
+    });
     if (existingNews) {
-      // If it exists, update the news/event data
-      existingNews.title = title;
-      existingNews.shortDesc = shortDesc;
-      existingNews.description = description;
-      existingNews.featuredImage = featuredImage;
-      existingNews.galleryimg = galleryimg;
-      existingNews.date = date;
-      existingNews.featured = featured;
-      existingNews.type = type;
-      existingNews.tags = tags;
-      existingNews.relatedLinks = relatedLinks;
-      existingNews.status = status;
-
-      await existingNews.save();
-      return res.status(200).json({
-        status: true,
-        message: "News and Event updated successfully",
-        data: existingNews,
+      return res.status(400).json({
+        status: false,
+        message: "News and Event with this type and title already exists",
+        data: false,
       });
     }
+
     // Generate a unique sid
     const existingsids = await NewsAndEvents.find({}, "sid");
     const existingIds = existingsids.map((activityMap) => activityMap.sid);
     const newSid = await generateUniqueId(existingIds);
-    // If it doesn't exist, create a new entry
+
+    // Create a new news and event entry
     const newsAndEvent = new NewsAndEvents({
       sid: newSid,
       title,
@@ -104,10 +92,16 @@ const addNewsAndEvents = async (req, res) => {
       type,
       tags,
       relatedLinks,
-      status,
     });
 
-    await newsAndEvent.save();
+    const savedNews = await newsAndEvent.save();
+    if (!savedNews) {
+      return res.status(500).json({
+        status: false,
+        message: "Failed to add News and Event",
+        data: false,
+      });
+    }
     return res.status(200).json({
       status: true,
       message: "News and Event added successfully",
@@ -122,11 +116,104 @@ const addNewsAndEvents = async (req, res) => {
     });
   }
 };
+const updateNewsAndEvents = async (req, res) => {
+  try {
+    const {
+      sid,
+      title,
+      shortDesc,
+      description,
+      featuredImage,
+      galleryimg,
+      date,
+      pageUrl,
+      featured,
+      type,
+      tags,
+      relatedLinks,
+      status,
+    } = req.body;
+
+    if (!sid) {
+      return res.status(400).json({
+        status: false,
+        message: "SID is required for updating",
+        data: false,
+      });
+    }
+    const typeArray = ["circuler", "article", "news", "event"];
+    const featuredArray = ["Yes", "No"];
+    if (type && !typeArray.includes(type)) {
+      return res.status(400).json({
+        status: false,
+        message: "Type value must be one of: " + typeArray.join("/"),
+        data: false,
+      });
+    }
+
+    if (featured && !featuredArray.includes(featured)) {
+      return res.status(400).json({
+        status: false,
+        message: "Featured value must be one of: " + featuredArray.join("/"),
+        data: false,
+      });
+    }
+
+    // Find existing news/event by sid
+    const existingNews = await NewsAndEvents.findOne({ sid });
+
+    if (!existingNews) {
+      return res.status(404).json({
+        status: false,
+        message: "News and Event not found with the given SID",
+        data: false,
+      });
+    }
+
+    // Update only the fields that are present in the request
+    if (title !== undefined) existingNews.title = title;
+    if (shortDesc !== undefined) existingNews.shortDesc = shortDesc;
+    if (description !== undefined) existingNews.description = description;
+    if (featuredImage !== undefined) existingNews.featuredImage = featuredImage;
+    if (galleryimg !== undefined) existingNews.galleryimg = galleryimg;
+    if (date !== undefined) existingNews.date = date;
+    if (pageUrl !== undefined) existingNews.pageUrl = pageUrl;
+    if (featured !== undefined) existingNews.featured = featured;
+    if (type !== undefined) existingNews.type = type;
+    if (tags !== undefined) existingNews.tags = tags;
+    if (relatedLinks !== undefined) existingNews.relatedLinks = relatedLinks;
+    if (status !== undefined) existingNews.status = status;
+
+    // Save the updated news/event
+    const savedNews = await existingNews.save();
+
+    return res.status(200).json({
+      status: true,
+      message: "News and Event updated successfully",
+      data: savedNews,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      status: false,
+      message: "Internal Server Error: " + error.message,
+      data: false,
+    });
+  }
+};
 const getAllNewsAndEvents = async (req, res) => {
   try {
-    // Fetch all news/events (You can add filters, sorting, etc., if needed)
-    const newsEvents = await NewsAndEvents.find();
-
+    const { type } = req.query;
+    
+    // Prepare the query object. If type is not provided, it won't filter by type.
+    const query = { status: true };
+    if (type) {
+      query.type = type;
+    }
+    
+    // Fetch all news/events with the optional type filter
+    const newsEvents = await NewsAndEvents.find(query);
+    
     if (!newsEvents.length) {
       return res.status(404).json({
         status: false,
@@ -149,9 +236,11 @@ const getAllNewsAndEvents = async (req, res) => {
     });
   }
 };
+
 const getNewsAndEvent = async (req, res) => {
   try {
-    const { sid } = req.query; // Assuming you're passing the pageUrl in the URL params
+    const { sid, type } = req.query; // Assuming you're passing the sid and type in the URL params
+    
     if (!sid || sid.trim() === "") {
       return res.status(400).json({
         status: false,
@@ -159,9 +248,17 @@ const getNewsAndEvent = async (req, res) => {
         data: false,
       });
     }
+
+    // Build the query object dynamically based on the presence of 'type'
+    const query = { sid, status: true };
     
-    // Find the news/event entry by pageUrl
-    const newsEvent = await NewsAndEvents.findOne({ sid });
+    // Include 'type' in the query only if it is provided
+    if (type) {
+      query.type = type;
+    }
+
+    // Find the news/event entry based on the query
+    const newsEvent = await NewsAndEvents.findOne(query);
 
     if (!newsEvent) {
       return res.status(404).json({
@@ -186,8 +283,55 @@ const getNewsAndEvent = async (req, res) => {
   }
 };
 
+const searchNewsAndEvents = async (req, res) => {
+  try {
+    const { title, type } = req.query;
+
+    let query = {};
+
+    // Title search (if provided)
+    if (title) {
+      query.title = { $regex: title, $options: "i" }; // Case-insensitive search
+    }
+    // Type validation and filter
+    const validTypes = ["circuler", "article", "news", "event"]; // Define valid types
+    if (type) {
+      if (!validTypes.includes(type)) {
+        return res.status(400).json({
+          status: false,
+          message: "Invalid type. Must be one of: " + validTypes.join(", "),
+          data: false,
+        });
+      }
+      query.type = type; // Add the type filter to the query
+    }
+
+    // Fetch news and events based on the query (title search or latest 10 events)
+    const newsAndEvents = await NewsAndEvents.find(query)
+      .sort({ date: -1 }) // Sort by date in descending order to get the latest ones
+      .limit(10); // Limit to 10 results
+
+    return res.status(200).json({
+      status: true,
+      message: newsAndEvents.length
+        ? "News and Events found"
+        : "No News and Events found",
+      data: newsAndEvents,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      status: false,
+      message: "Internal Server Error: " + error.message,
+      data: false,
+    });
+  }
+};
+
 module.exports = {
   addNewsAndEvents,
+  updateNewsAndEvents,
   getAllNewsAndEvents,
   getNewsAndEvent,
+  searchNewsAndEvents,
 };
