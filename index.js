@@ -13,7 +13,16 @@ app.use(cors()); // To parse JSON request bodies
 app.use(express.json()); // To parse JSON request bodies
 
 // Import Routers
-const { adminRouter, slugRouter, metaRouter, newsAndEventsRouter} = require("./routes");
+const {
+  adminRouter,
+  slugRouter,
+  metaRouter,
+  newsAndEventsRouter,
+  schoolRouter,
+  departmentRouter,
+  facultyRouter,
+} = require("./routes");
+const { facultyController } = require("./controller");
 
 // Admin Router
 app.use("/api/auth", adminRouter);
@@ -26,6 +35,13 @@ app.use("/api/meta", metaRouter);
 
 // Slug Router
 app.use("/api/news-and-event", newsAndEventsRouter);
+
+// Slug Router
+app.use("/api/school", schoolRouter);
+
+app.use("/api/department", departmentRouter);
+//
+app.use("/api/faculty", facultyRouter);
 
 // Start the server
 app.listen(PORT || 3000, () => {
