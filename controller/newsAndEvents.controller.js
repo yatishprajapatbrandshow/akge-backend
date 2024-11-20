@@ -236,7 +236,6 @@ const getAllNewsAndEvents = async (req, res) => {
     });
   }
 };
-
 const getNewsAndEvent = async (req, res) => {
   try {
     const { sid, type } = req.query; // Assuming you're passing the sid and type in the URL params

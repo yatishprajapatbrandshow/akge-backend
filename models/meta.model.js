@@ -22,6 +22,14 @@ const metaSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    status: {
+      type: Boolean,
+      default: true,
+    },
+    deleteflag: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

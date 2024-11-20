@@ -381,7 +381,6 @@ const insert = async (req, res) => {
 //     }
 // };
 
-
 const getParent = async (req, res) => {
 
     const { query = "", page = 1, limit = 10 } = req.body; // page and limit are for pagination

@@ -83,8 +83,27 @@ const addMeta = async (req, res) => {
       .json({ status: false, message: "Server error", data: false });
   }
 };
+const list = async (req, res) => {
+  try {
+    const metas = await Meta.find({ status: true, deleteflag: false });
+    if (metas || metas.length) {
+      return res
+        .status(200)
+        .json({ status: true, message: "Meta found", data: metas });
+    }
+    return res
+      .status(404)
+      .json({ status: false, message: "Meta not found", data: false });
+  } catch (error) {
+    console.error(error);
+   return res
+      .status(500)
+      .json({ status: false, message: "Server error", data: false });
+  }
+};
 
 module.exports = {
   getMeta,
   addMeta,
+  list
 };
