@@ -21,8 +21,8 @@ const {
   schoolRouter,
   departmentRouter,
   facultyRouter,
+  staticPageRouter,
 } = require("./routes");
-const { facultyController } = require("./controller");
 
 // Admin Router
 app.use("/api/auth", adminRouter);
@@ -34,7 +34,7 @@ app.use("/api/slug", slugRouter);
 app.use("/api/meta", metaRouter);
 
 // Slug Router
-app.use("/api/news-and-event", newsAndEventsRouter);
+app.use("/api/news-and-event", newsAndEventsRouter);  
 
 // Slug Router
 app.use("/api/school", schoolRouter);
@@ -42,6 +42,8 @@ app.use("/api/school", schoolRouter);
 app.use("/api/department", departmentRouter);
 //
 app.use("/api/faculty", facultyRouter);
+// Static page
+app.use("/api/static-page", staticPageRouter);
 
 // Start the server
 app.listen(PORT || 3000, () => {

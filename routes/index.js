@@ -5,6 +5,7 @@ const newsAndEventsRouter = require("./newsAndEvents.router");
 const schoolRouter = require("./school.router");
 const departmentRouter = require("./department.router");
 const facultyRouter = require("./faculty.router");
+const staticPageRouter = require("./staticPage.router");
 module.exports = {
   adminRouter,
   slugRouter,
@@ -13,4 +14,5 @@ module.exports = {
   schoolRouter,
   departmentRouter,
   facultyRouter,
+  staticPageRouter
 };
