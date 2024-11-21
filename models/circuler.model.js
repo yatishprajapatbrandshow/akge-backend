@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const newsAndEventsSchema = new mongoose.Schema(
+const circulerSchema = new mongoose.Schema(
   {
     sid: {
       type: Number,
@@ -54,4 +54,4 @@ const newsAndEventsSchema = new mongoose.Schema(
   { timestamps: true, timeseries: true }
 );
 
-module.exports = mongoose.model("newsandevents", newsAndEventsSchema);
+module.exports = mongoose.model("circuler", circulerSchema);

@@ -259,6 +259,9 @@ const slugSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    galleryimg: {
+        type: Array,
+      },
     type: {
         type: String,
         required: false

@@ -17,33 +17,36 @@ const {
   adminRouter,
   slugRouter,
   metaRouter,
-  newsAndEventsRouter,
   schoolRouter,
   departmentRouter,
   facultyRouter,
   staticPageRouter,
+  circulerRouter,
 } = require("./routes");
 
 // Admin Router
 app.use("/api/auth", adminRouter);
 
-// Slug Router
-app.use("/api/slug", slugRouter);
+// meta Router
+app.use("/api/meta", slugRouter);
 
-// Slug Router
+// meta Router
 app.use("/api/meta", metaRouter);
 
-// Slug Router
-app.use("/api/news-and-event", newsAndEventsRouter);  
+//Circuler Router
+app.use("/api/circuler", circulerRouter);
 
-// Slug Router
+// school Router
 app.use("/api/school", schoolRouter);
 
+// department Router
 app.use("/api/department", departmentRouter);
-// 
+
+// faculty Router
 app.use("/api/faculty", facultyRouter);
-// Static page
-app.use("/api/static-page", staticPageRouter); 
+
+// static-page page
+app.use("/api/static-page", staticPageRouter);
 
 // Start the server
 app.listen(PORT || 3000, () => {
