@@ -262,6 +262,10 @@ const slugSchema = new mongoose.Schema({
     galleryimg: {
         type: Array,
       },
+    highlightBanner:{
+        type: String,
+        required: false
+    },
     type: {
         type: String,
         required: false

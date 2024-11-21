@@ -307,6 +307,7 @@ const update = async (req, res) => {
       video_url,
       type,
       old_url,
+      highlightBanner,
       status = true,
       editedby = "Admin",
     } = req.body;
@@ -441,6 +442,7 @@ const update = async (req, res) => {
         path,
         id_path,
         old_url,
+        highlightBanner,
         status,
         editedon: Date.now(),
         editedby,
