@@ -40,10 +40,10 @@ app.use("/api/news-and-event", newsAndEventsRouter);
 app.use("/api/school", schoolRouter);
 
 app.use("/api/department", departmentRouter);
-//
+// 
 app.use("/api/faculty", facultyRouter);
 // Static page
-app.use("/api/static-page", staticPageRouter);
+app.use("/api/static-page", staticPageRouter); 
 
 // Start the server
 app.listen(PORT || 3000, () => {
