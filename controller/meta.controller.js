@@ -1,4 +1,4 @@
-const { Meta } = require("../models");
+const { Meta, Slug } = require("../models");
 
 const getMeta = async (req, res) => {
   try {
@@ -8,6 +8,14 @@ const getMeta = async (req, res) => {
       return res
         .status(400)
         .json({ status: false, message: "Page ID is required", data: false });
+    }
+    // validate pageid in slug model
+    const slug = await Slug.findOne({ page_id: pageid, status: true });
+
+    if (!slug) {
+      return res
+        .status(404)
+        .json({ status: false, message: "Page ID not found", data: false });
     }
     const meta = await Meta.findOne({
       pageid,
@@ -45,6 +53,13 @@ const addMeta = async (req, res) => {
         } required`,
         data: false,
       });
+    }
+    const slug = await Slug.findOne({ page_id: pageid, status: true });
+
+    if (!slug) {
+      return res
+        .status(404)
+        .json({ status: false, message: "Page ID not found", data: false });
     }
 
     // Check if the meta entry already exists for the given pageid
@@ -86,17 +101,30 @@ const addMeta = async (req, res) => {
 const list = async (req, res) => {
   try {
     const metas = await Meta.find({ status: true, deleteflag: false });
+
+    // Use Promise.all to handle asynchronous operations inside map
+    const updatedMetas = await Promise.all(
+      metas.map(async (meta) => {
+        const slug = await Slug.findOne({ page_id: meta.pageid, status: true });
+        // Create a copy of meta and add the pageName property
+        return {
+          ...meta.toObject(), // Convert the MongoDB document to a plain JavaScript object
+          pageName: slug ? slug.name : null, // Add the pageName property
+        };
+      })
+    );
+
     if (metas || metas.length) {
       return res
         .status(200)
-        .json({ status: true, message: "Meta found", data: metas });
+        .json({ status: true, message: "Meta found", data: updatedMetas });
     }
     return res
       .status(404)
       .json({ status: false, message: "Meta not found", data: false });
   } catch (error) {
     console.error(error);
-   return res
+    return res
       .status(500)
       .json({ status: false, message: "Server error", data: false });
   }
@@ -105,5 +133,5 @@ const list = async (req, res) => {
 module.exports = {
   getMeta,
   addMeta,
-  list
+  list,
 };
