@@ -20,10 +20,14 @@ const getMeta = async (req, res) => {
     const meta = await Meta.findOne({
       pageid,
     });
+    const updatedMeta = {
+      ...meta.toObject(),
+      pageName: slug.name,
+    };
     if (meta) {
       return res
         .status(200)
-        .json({ status: true, message: "Meta found", data: meta });
+        .json({ status: true, message: "Meta found", data: updatedMeta });
     }
     return res
       .status(404)
