@@ -309,6 +309,7 @@ const update = async (req, res) => {
       old_url,
       highlightBanner,
       status = true,
+      deleteflag = false,
       editedby = "Admin",
     } = req.body;
 
@@ -446,6 +447,7 @@ const update = async (req, res) => {
         status,
         editedon: Date.now(),
         editedby,
+        deleteflag,
       },
       { new: true } // Return the updated document
     );
