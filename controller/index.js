@@ -6,6 +6,7 @@ const schoolController = require("./school.controller");
 const departmentController = require("./department.controller");
 const facultyController = require("./faculty.controller");
 const staticPageController = require("./staticPage.controller");
+const announcementController = require("./announcement.controller");
 module.exports = {
   adminController,
   slugController,
@@ -14,5 +15,6 @@ module.exports = {
   schoolController,
   departmentController,
   facultyController,
-  staticPageController
+  staticPageController,
+  announcementController,
 };

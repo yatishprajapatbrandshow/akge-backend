@@ -6,6 +6,7 @@ const School = require("./schools.model");
 const Departments = require("./department.model");
 const Faculty = require("./faculty.model");
 const Toppers = require("./topperList.model");
+const Announcements = require("./announcement.model");
 module.exports = {
   Admin,
   Slug,
@@ -15,4 +16,5 @@ module.exports = {
   Departments,
   Faculty,
   Toppers,
+  Announcements
 };

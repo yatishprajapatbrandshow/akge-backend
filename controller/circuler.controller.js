@@ -15,6 +15,7 @@ const addCirculer = async (req, res) => {
       type,
       tags,
       relatedLinks,
+      pdf,
     } = req.body;
 
     const missingFields = [];
@@ -29,6 +30,7 @@ const addCirculer = async (req, res) => {
     if (!type) missingFields.push("Type");
     if (!tags) missingFields.push("Tags");
     if (!relatedLinks) missingFields.push("Related Links");
+    if (!pdf) missingFields.push("PDF");
 
     const typeArray = ["circuler"];
     const featuredArray = ["Yes", "No"];
@@ -92,6 +94,7 @@ const addCirculer = async (req, res) => {
       type,
       tags,
       relatedLinks,
+      pdf,
     });
 
     const savedNews = await circuler.save();
@@ -204,16 +207,16 @@ const updateCirculer = async (req, res) => {
 const getAllCirculer = async (req, res) => {
   try {
     const { type } = req.query;
-    
+
     // Prepare the query object. If type is not provided, it won't filter by type.
     const query = { status: true };
     if (type) {
       query.type = type;
     }
-    
+
     // Fetch all news/events with the optional type filter
     const newsEvents = await Circuler.find(query);
-    
+
     if (!newsEvents.length) {
       return res.status(404).json({
         status: false,
@@ -239,7 +242,7 @@ const getAllCirculer = async (req, res) => {
 const getCirculer = async (req, res) => {
   try {
     const { sid, type } = req.query; // Assuming you're passing the sid and type in the URL params
-    
+
     if (!sid || sid.trim() === "") {
       return res.status(400).json({
         status: false,
@@ -250,7 +253,7 @@ const getCirculer = async (req, res) => {
 
     // Build the query object dynamically based on the presence of 'type'
     const query = { sid, status: true };
-    
+
     // Include 'type' in the query only if it is provided
     if (type) {
       query.type = type;
@@ -311,9 +314,7 @@ const searchCirculer = async (req, res) => {
 
     return res.status(200).json({
       status: true,
-      message: Circuler.length
-        ? "Circulers found"
-        : "No Circulers found",
+      message: Circuler.length ? "Circulers found" : "No Circulers found",
       data: Circuler,
     });
   } catch (error) {

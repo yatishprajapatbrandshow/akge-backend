@@ -31,7 +31,6 @@ function createPathFromTitle(title) {
 
   return "/" + path;
 }
-
 // const insert = async (req, res) => {
 //   try {
 //     // Destructure the request body with default values
@@ -239,6 +238,7 @@ function createPathFromTitle(title) {
 //       .json({ status: false, message: "Server error", data: false });
 //   }
 // };
+
 const update = async (req, res) => {
   try {
     // Destructure the request body with default values
