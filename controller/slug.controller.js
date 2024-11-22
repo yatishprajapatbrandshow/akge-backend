@@ -874,10 +874,10 @@ const getList = async (req, res) => {
 const getSlugByType = async (req, res) => {
   try {
     let { type } = req.query;
-    
+
     // Ensure `type` is treated as an array
     if (!Array.isArray(type)) {
-      type = type ? type.split(',') : [];
+      type = type ? type.split(",") : [];
     }
     const slugs = await Slug.find({ type: { $in: type }, deleteflag: false });
 
@@ -895,7 +895,7 @@ const getSlugByType = async (req, res) => {
       data: slugs,
     });
   } catch (error) {
-    console.error('Error fetching slugs:', error);
+    console.error("Error fetching slugs:", error);
     return res.status(500).json({
       status: false,
       message: "Server error",
@@ -903,13 +903,52 @@ const getSlugByType = async (req, res) => {
     });
   }
 };
+const getById = async (req, res) => {
+  try {
+    const { page_id } = req.query;
+    if (!page_id) {
+      return res.status(400).json({
+        status: false,
+        message: "Missing required fields",
+        data: false,
+      });
+    }
+    if (isNaN(page_id)) {
+      return res.status(400).json({
+        status: false,
+        message: "Invalid page_id",
+        data: false,
+      });
+    }
+    const slug = await Slug.findOne({ page_id });
 
-
+    if (!slug) {
+      return res.status(404).json({
+        status: false,
+        message: "Slug not found",
+        data: false,
+      });
+    }
+    return res.status(200).json({
+      status: true,
+      message: "Slug fetched successfully",
+      data: slug,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      status: false,
+      message: "Server error",
+      data: false,
+    });
+  }
+};
 module.exports = {
   // insert,
   getParent,
   getList,
   addPageInactive,
   update,
-  getSlugByType
+  getSlugByType,
+  getById,
 };

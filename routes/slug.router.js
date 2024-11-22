@@ -19,13 +19,7 @@ router.post("/getList", slugController.getList);
 // // Route to get all slugs
 router.get("/getbytype", slugController.getSlugByType);
 
-// // Route to get a slug by ID
-// router.get('/:id', slugController.getSlugById);
-
-// // Route to update a slug by ID
-// router.put('/:id', slugController.updateSlug);
-
-// // Route to delete a slug by ID
-// router.delete('/:id', slugController.deleteSlug);
+// // Route to get all slugs
+router.get("/getbyid", slugController.getById);
 
 module.exports = router;
