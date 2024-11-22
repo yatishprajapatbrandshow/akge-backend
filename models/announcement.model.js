@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const circulerSchema = new mongoose.Schema(
+const announcementSchema = new mongoose.Schema(
   {
     sid: {
       type: Number,
@@ -18,30 +18,17 @@ const circulerSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    featuredImage: {
-      type: String,
-    },
-    galleryimg: {
-      type: Array,
-    },
-    date: {
+    startdate: {
       type: String,
       required: true,
     },
-    pageUrl: {
+    enddate: {
       type: String,
       required: true,
-    },
-    featured: {
-      type: String,
-      enum: ["Yes", "No"],
     },
     type: {
       type: String,
-      enum: ["circuler", "article", "news", "event"],
-    },
-    tags: {
-      type: [String],
+      enum: ["announcement"],
     },
     relatedLinks: {
       type: [{}],
@@ -57,4 +44,4 @@ const circulerSchema = new mongoose.Schema(
   { timestamps: true, timeseries: true }
 );
 
-module.exports = mongoose.model("circuler", circulerSchema);
+module.exports = mongoose.model("announcement", announcementSchema);

@@ -28,7 +28,7 @@ const {
 app.use("/api/auth", adminRouter);
 
 // meta Router
-app.use("/api/meta", slugRouter);
+app.use("/api/slug", slugRouter);
 
 // meta Router
 app.use("/api/meta", metaRouter);

@@ -851,7 +851,7 @@ const getParent = async (req, res) => {
 };
 const getList = async (req, res) => {
   try {
-    const slugs = await Slug.find({deleteflag: false });
+    const slugs = await Slug.find({ deleteflag: false });
     if (slugs.length === 0) {
       return res.status(200).json({
         status: true,
@@ -871,11 +871,45 @@ const getList = async (req, res) => {
       .json({ status: false, message: "Server error", data: false });
   }
 };
+const getSlugByType = async (req, res) => {
+  try {
+    let { type } = req.query;
+    
+    // Ensure `type` is treated as an array
+    if (!Array.isArray(type)) {
+      type = type ? type.split(',') : [];
+    }
+    const slugs = await Slug.find({ type: { $in: type }, deleteflag: false });
+
+    if (slugs.length === 0) {
+      return res.status(200).json({
+        status: true,
+        message: "No data found",
+        data: false,
+      });
+    }
+
+    return res.status(200).json({
+      status: true,
+      message: "Slugs fetched successfully",
+      data: slugs,
+    });
+  } catch (error) {
+    console.error('Error fetching slugs:', error);
+    return res.status(500).json({
+      status: false,
+      message: "Server error",
+      data: false,
+    });
+  }
+};
+
 
 module.exports = {
   // insert,
   getParent,
   getList,
   addPageInactive,
-  update
+  update,
+  getSlugByType
 };
