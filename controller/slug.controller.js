@@ -778,7 +778,7 @@ const addPageInactive = async (req, res) => {
 // };
 
 const getParent = async (req, res) => {
-  const { query = "", page = 1, limit = 10 } = req.body; // page and limit are for pagination
+  const { query = "", page = 1, limit = 10, type, } = req.body; // Allow parentId to be dynamic, default to 0
 
   try {
     // Calculate how many records to skip based on the current page and limit
@@ -787,35 +787,33 @@ const getParent = async (req, res) => {
     let pages = [];
     let total = 0;
 
-    // If the search query is empty, find pages where parentId is 0
-    if (query === "") {
-      // Find parent pages with parentId = 0, returning `name` and `reportId`
-      pages = await Slug.find(
-        { parentId: 0 },
-        { name: 1, page_id: 1 } // Project only `name` and `reportId`
-      )
-        .skip(skip) // Skip pages based on pagination
-        .limit(limit); // Limit the number of pages returned
+    // Build query conditions for filtering
+    const queryConditions = {};
 
-      // Get total number of pages where parentId = 0
-      total = await Slug.countDocuments({ parentId: 0 });
-    } else {
-      // Find parent pages matching the search query, only returning `name` and `reportId`
-      pages = await Slug.find(
-        {
-          name: { $regex: query, $options: "i" }, // Case-insensitive search using regex
-        },
-        { name: 1, page_id: 1 } // Project only `name` and `reportId`
-      )
-        .skip(skip) // Skip pages based on pagination
-        .limit(limit); // Limit the number of pages returned
+    // If parentId is provided, add it to the filter
+    // queryConditions.parentId = parentId;
 
-      // Get total number of pages matching the query
-      total = await Slug.countDocuments({
-        name: { $regex: query, $options: "i" },
-        parentId: 0,
-      });
+    // If query (search term) is provided, add it to the filter
+    if (query !== "") {
+      queryConditions.name = { $regex: query, $options: "i" }; // Case-insensitive search
     }
+
+    // Check for status and deleteflag if provided (defaulting to true/false if not)
+    queryConditions.status = true;
+    queryConditions.deleteflag = false;
+
+    // If `type` is provided, add it to the conditions
+    if (type) {
+      queryConditions.type = type;
+    }
+
+    // Find pages based on conditions
+    pages = await Slug.find(queryConditions, { name: 1, page_id: 1 }) // Project only `name` and `page_id`
+      .skip(skip) // Skip pages based on pagination
+      .limit(limit); // Limit the number of pages returned
+
+    // Get total number of pages matching the conditions
+    total = await Slug.countDocuments(queryConditions);
 
     // If no pages are found, respond with the default "This is parent page"
     if (pages.length === 0) {
@@ -837,7 +835,7 @@ const getParent = async (req, res) => {
       message: "Pages fetched successfully",
       data: {
         pages: [{ name: "This is main page", page_id: 0 }, ...pages], // The actual list of pages (name and reportId)
-        total, // Total pages matching the query or parentId=0
+        total, // Total pages matching the conditions
         page, // Current page
         limit, // Results per page
       },
@@ -851,6 +849,7 @@ const getParent = async (req, res) => {
     });
   }
 };
+
 const getList = async (req, res) => {
   try {
     const slugs = await Slug.find({ deleteflag: false });
