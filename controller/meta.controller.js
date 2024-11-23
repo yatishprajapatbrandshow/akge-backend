@@ -41,7 +41,7 @@ const getMeta = async (req, res) => {
 };
 const addMeta = async (req, res) => {
   try {
-    const { pageid, metatitle, metaDescription, metaKeywords, path } = req.body;
+    const { pageid, metatitle, metaDescription, metaKeywords, path,status=true,deleteflag=false } = req.body;
     const missings = [];
     if (!pageid) missings.push("Page ID");
     if (!metatitle) missings.push("Meta Title");
@@ -75,6 +75,8 @@ const addMeta = async (req, res) => {
       existingMeta.metaDescription = metaDescription;
       existingMeta.metaKeywords = metaKeywords;
       existingMeta.path = path;
+      existingMeta.status = status; 
+      existingMeta.deleteflag = deleteflag;
 
       await existingMeta.save();
       return res.status(200).json({
