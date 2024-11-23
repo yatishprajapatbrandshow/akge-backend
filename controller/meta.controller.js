@@ -41,7 +41,15 @@ const getMeta = async (req, res) => {
 };
 const addMeta = async (req, res) => {
   try {
-    const { pageid, metatitle, metaDescription, metaKeywords, path,status=true,deleteflag=false } = req.body;
+    const {
+      pageid,
+      metatitle,
+      metaDescription,
+      metaKeywords,
+      path,
+      status = true,
+      deleteflag = false,
+    } = req.body;
     const missings = [];
     if (!pageid) missings.push("Page ID");
     if (!metatitle) missings.push("Meta Title");
@@ -75,7 +83,7 @@ const addMeta = async (req, res) => {
       existingMeta.metaDescription = metaDescription;
       existingMeta.metaKeywords = metaKeywords;
       existingMeta.path = path;
-      existingMeta.status = status; 
+      existingMeta.status = status;
       existingMeta.deleteflag = deleteflag;
 
       await existingMeta.save();
@@ -135,9 +143,37 @@ const list = async (req, res) => {
       .json({ status: false, message: "Server error", data: false });
   }
 };
-
+const deleteMeta = async (req, res) => {
+  try {
+    const { pageid } = req.body;
+    if (!pageid) {
+      return res
+        .status(400)
+        .json({ status: false, message: "Page ID is required", data: false });
+    }
+    const meta = await Meta.findOne({ pageid });
+    if (!meta) {
+      return res
+        .status(404)
+        .json({ status: false, message: "Meta not found", data: false });
+    }
+    meta.deleteflag = true;
+    meta.status = false;
+    await meta.save();
+    return res
+      .status(200)
+      .json({ status: true, message: "Meta deleted", data: meta });
+      
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ status: false, message: "Server error", data: false });
+  }
+};
 module.exports = {
   getMeta,
   addMeta,
   list,
+  deleteMeta,
 };
