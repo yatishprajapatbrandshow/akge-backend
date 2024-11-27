@@ -52,6 +52,9 @@ app.use("/api/static-page", staticPageRouter);
 // static-page page
 app.use("/api/announcement", announcementRouter);
 
+// static-page page
+app.use("/api/highlight-banner", announcementRouter);
+
 // Start the server
 app.listen(PORT || 3000, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

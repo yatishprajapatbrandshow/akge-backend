@@ -7,6 +7,7 @@ const departmentRouter = require("./department.router");
 const facultyRouter = require("./faculty.router");
 const staticPageRouter = require("./staticPage.router");
 const announcementRouter = require("./announcements.router");
+const highlightBannerRouter = require("./highlight-banner.router");
 module.exports = {
   adminRouter,
   slugRouter,
@@ -17,4 +18,5 @@ module.exports = {
   facultyRouter,
   staticPageRouter,
   announcementRouter,
+  highlightBannerRouter,
 };

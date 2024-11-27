@@ -112,7 +112,7 @@ const updateHighlightBanner = async (req, res) => {
  */
 const deleteHighlightBanner = async (req, res) => {
   try {
-    const { _id } = req.params;
+    const { _id } = req.body;
 
     // Soft delete: set deleteflag to true
     const deletedBanner = await HighlightBanner.findByIdAndUpdate(
