@@ -121,7 +121,7 @@ const deleteHighlightBanner = async (req, res) => {
     // Soft delete: set deleteflag to true
     const deletedBanner = await HighlightBanner.findByIdAndUpdate(
       _id,
-      { deleteflag: true },
+      { deleteflag: true, status: false },
       { new: true }
     );
 
