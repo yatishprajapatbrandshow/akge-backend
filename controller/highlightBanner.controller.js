@@ -174,6 +174,36 @@ const getHighlightBannerById = async (req, res) => {
       .json({ status: false, message: error.message, data: false });
   }
 };
+
+/**
+ * Get highlight banners List
+ */
+const getHighlightBannerList = async (req, res) => {
+  try {
+    const banners = await HighlightBanner.find({
+      status: true,
+      deleteflag: false,
+    });
+
+    if (!banners.length) {
+      return res.status(404).json({
+        status: false,
+        message: "No highlight banners found.",
+        data: false,
+      });
+    }
+
+    return res.status(200).json({
+      status: true,
+      message: "Highlight banners fetched successfully.",
+      data: banners,
+    });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ status: false, message: error.message, data: false });
+  }
+};
 /**
  * Get highlight banners by page ID
  */
@@ -204,6 +234,7 @@ const getHighlightBannerByPageId = async (req, res) => {
 };
 module.exports = {
   addHighlightBanner,
+  getHighlightBannerList,
   updateHighlightBanner,
   deleteHighlightBanner,
   getHighlightBannerById,
