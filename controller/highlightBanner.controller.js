@@ -30,12 +30,14 @@ const addHighlightBanner = async (req, res) => {
         data: false,
       });
     }
+    const checkBanner = await HighlightBanner.findOne({}).sort({ order: -1 });
     // Create new highlight banner
     const newBanner = new HighlightBanner({
       pageid,
       banner,
       description,
       link,
+      order: checkBanner ? checkBanner.order + 1 : 1,
     });
     await newBanner.save();
 
@@ -45,6 +47,8 @@ const addHighlightBanner = async (req, res) => {
       data: newBanner,
     });
   } catch (error) {
+    console.log(error);
+
     return res
       .status(500)
       .json({ status: false, message: error.message, data: false });
