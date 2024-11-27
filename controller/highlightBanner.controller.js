@@ -149,7 +149,7 @@ const deleteHighlightBanner = async (req, res) => {
  */
 const getHighlightBannerById = async (req, res) => {
   try {
-    const { _id } = req.params;
+    const { _id } = req.query;
 
     const banner = await HighlightBanner.findById(_id).where({
       deleteflag: false,
