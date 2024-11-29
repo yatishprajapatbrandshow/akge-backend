@@ -88,8 +88,10 @@ const create = async (req, res) => {
       deleteflg: false,
     });
     const saved = await department.save();
-    schoolExists.departments.push(saved._id);
-    await schoolExists.save();
+    if (!schoolExists.departments.includes(saved._id)) {
+      schoolExists.departments.push(saved._id); // Add department if it's not already in the list
+      await schoolExists.save(); // Save the updated school object
+    }
     if (saved) {
       return res.status(201).json({
         status: true,
@@ -243,10 +245,11 @@ const update = async (req, res) => {
       },
       { new: true }
     ).exec();
-
-    await schoolExists.save();
-    schoolExists.departments.push(updated._id);
-    await schoolExists.save();
+    // check unique
+    if (!schoolExists.departments.includes(_id)) {
+      schoolExists.departments.push(_id);
+      await schoolExists.save();
+    }
     if (updated) {
       return res.status(200).json({
         status: true,
@@ -419,7 +422,36 @@ const getbySchool = async (req, res) => {
 };
 const search = async (req, res) => {
   try {
-    const { search } = req.query;
+    const { search, school_id } = req.query;
+    if (!search) {
+      return res.status(400).json({
+        status: false,
+        message: "Search key is required!",
+        data: false,
+      });
+    }
+    if (school_id) {
+      if (mongoose.Types.ObjectId.isValid(school_id) === false) {
+        return res.status(400).json({
+          status: false,
+          message: "Invalid school _id!",
+          data: false,
+        });
+      } else {
+        const schoolExists = await School.findOne({ _id: school_id });
+        if (!schoolExists) {
+          return res.status(400).json({
+            status: false,
+            message: "School does not exist!",
+            data: false,
+          });
+        }
+      }
+    }
+    const query = {};
+    if (school_id) {
+      query.school = school_id;
+    }
     if (!search) {
       return res.status(400).json({
         status: false,
@@ -433,6 +465,7 @@ const search = async (req, res) => {
         { departmentCode: { $regex: search, $options: "i" } },
         { description: { $regex: search, $options: "i" } },
       ],
+      query,
       status: true,
       deleteflag: false,
     })
@@ -462,6 +495,66 @@ const search = async (req, res) => {
     });
   }
 };
+const deleteDepartment = async (req, res) => {
+  try {
+    const { id } = req.query;
+    if (!id) {
+      return res.status(400).json({
+        status: false,
+        message: "Department ID is required!",
+        data: false,
+      });
+    }
+    // Fetch department by id
+    const department = await Departments.findOne({
+      _id: id,
+      status: true,
+      deleteflag: false,
+    }).exec();
+    // Check if department exists
+    if (department) {
+      department.deleteflag = true;
+      department.status = false;
+      await department.save();
+
+      const schoolExists = await School.findOne({ _id: department.school });
+      schoolExists.departments = schoolExists.departments.filter(
+        (dep) => dep.toString() !== department._id.toString()
+      );
+      await schoolExists.save();
+
+      // Remove from the faculty
+      if (department.faculty.length > 0) {
+        department.faculty.forEach(async (fac) => {
+          const facultyExists = await Faculty.findOne({ _id: fac });
+          facultyExists.department = facultyExists.department.filter(
+            (dep) => dep.toString() !== department._id.toString()
+          );
+          await facultyExists.save();
+        });
+      }
+
+      return res.status(200).json({
+        status: true,
+        message: "Department deleted successfully!",
+        data: department,
+      });
+    } else {
+      return res.status(404).json({
+        status: false,
+        message: "Department not found!",
+        data: false,
+      });
+    }
+  } catch (error) {
+    // Return error response if something goes wrong
+    return res.status(500).json({
+      status: false,
+      message: `Error deleting department: ${error.message}`,
+      data: false,
+    });
+  }
+};
 module.exports = {
   create,
   findAll,
@@ -469,4 +562,5 @@ module.exports = {
   update,
   getbySchool,
   search,
+  deleteDepartment,
 };

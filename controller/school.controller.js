@@ -231,7 +231,7 @@ const search = async (req, res) => {
       .skip(skip)
       .limit(limitNum)
       .populate("departments")
-      .exec();  
+      .exec();
     // Count total documents matching the query
     const totalSchools = await School.countDocuments(query);
 
@@ -270,11 +270,70 @@ const search = async (req, res) => {
     });
   }
 };
+const deleteSchool = async (req, res) => {
+  try {
+    const { id } = req.query;
+    // Validate the school ID
+    if (!id || mongoose.Types.ObjectId.isValid(id) === false) {
+      return res.status(400).json({
+        status: false,
+        message: "Invalid school ID provided!",
+        data: false,
+      });
+    }
 
+    // Check if the school exists
+    const school = await School.findById(id);
+    if (!school) {
+      return res.status(404).json({
+        status: false,
+        message: "School not found!",
+        data: false,
+      });
+    }
+    school.deleteflag = true;
+    school.status = false;
+    // Delete the school
+    await school.save();
+
+    const departments = await Departments.find({ school: id });
+    departments.forEach(async (department) => {
+      department.deleteflag = true;
+      department.status = false;
+      await department.save();
+    });
+    
+    const faculty = await Faculty.find({
+      school: id,
+      status: true,
+      deleteflag: false,
+    });
+
+    faculty.forEach(async (faculty) => {
+      faculty.status = false;
+      faculty.deleteflag = true;
+      faculty.save();
+    });
+
+    return res.status(200).json({
+      status: true,
+      message: "School deleted successfully!",
+      data: true,
+    });
+  } catch (error) {
+    console.error("Error deleting school:", error);
+    return res.status(500).json({
+      status: false,
+      message: "Internal server error. " + error.message,
+      data: false,
+    });
+  }
+};
 module.exports = {
   create,
   findAll,
   findById,
   update,
   search,
+  deleteSchool,
 };

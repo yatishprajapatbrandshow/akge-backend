@@ -12,11 +12,20 @@ const facultySchema = new mongoose.Schema(
       unique: true,
     },
     designation: String,
-    department: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Department", // Reference to the Department model
-      // required: true,
-    },
+    department: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Department", // Reference to the Department model
+        // required: true, // Ensures at least one department is assigned
+      },
+    ],
+    school: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "School", // Reference to the School model
+        // required: true, // Ensures at least one School is assigned
+      },
+    ],
     phoneNumber: String,
     address: Object,
     dateOfBirth: Date, // Date of birth of the faculty member
@@ -30,13 +39,8 @@ const facultySchema = new mongoose.Schema(
     },
     subjectsTaught: [String], // List of subjects taught by the faculty
     researchInterests: [String], // List of research interests
-    // officeLocation: String, // Office location within the department
-    //   isTenured: {
-    //     type: Boolean,
-    //     default: false, // Whether the faculty member has tenure
-    //   },
     profilePicture: String, // URL or path to faculty profile picture
-    socialLinks: [],
+    socialLinks: [], // Array to hold social media links
     status: {
       type: Boolean,
       default: true,
