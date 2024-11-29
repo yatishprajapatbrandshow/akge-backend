@@ -15,10 +15,10 @@ const departmentSchema = new mongoose.Schema({
     type: String, // Unique department code, e.g., 'CS01'
     required: true,
   },
-  headOfDepartment: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Faculty", // Reference to the Faculty model (Head of Department)
-  },
+  // headOfDepartment: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: "Faculty", // Reference to the Faculty model (Head of Department)
+  // },
   programsOffered: [String], // List of programs or degrees offered by the department
   faculty: [
     {

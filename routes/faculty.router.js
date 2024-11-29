@@ -10,5 +10,6 @@ router.post("/update", facultyController.update);
 router.get("/list", facultyController.getAll);
 router.get("/get-by-id", facultyController.findById);
 router.get("/get-by-department-id", facultyController.getByDepartment);
-
+router.get("/search", facultyController.search);
+router.get("/delete", facultyController.deleteFaculty);
 module.exports = router;

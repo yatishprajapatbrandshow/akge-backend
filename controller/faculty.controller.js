@@ -19,6 +19,7 @@ const create = async (req, res) => {
       profilePicture,
       socialLinks,
     } = req.body;
+
     // Validate the request
     if (
       !firstName ||
@@ -298,10 +299,100 @@ const getByDepartment = async (req, res) => {
     });
   }
 };
+const search = async (req, res) => {
+  try {
+    const { search } = req.query;
+    const faculty = await Faculty.find({
+      $or: [
+        { firstName: { $regex: search, $options: "i" } },
+        { lastName: { $regex: search, $options: "i" } },
+        { email: { $regex: search, $options: "i" } },
+        { designation: { $regex: search, $options: "i" } },
+        { phoneNumber: { $regex: search, $options: "i" } },
+        { address: { $regex: search, $options: "i" } },
+        { dateOfBirth: { $regex: search, $options: "i" } },
+        { hireDate: { $regex: search, $options: "i" } },
+        { salary: { $regex: search, $options: "i" } },
+        { subjectsTaught: { $regex: search, $options: "i" } },
+        { researchInterests: { $regex: search, $options: "i" } },
+        { profilePicture: { $regex: search, $options: "i" } },
+        { socialLinks: { $regex: search, $options: "i" } },
+      ],
+      deleteflag: false,
+      status: true,
+    }).populate("department");
+
+    if (!faculty) {
+      return res.status(400).json({
+        status: false,
+        message: "Faculty does not exist!",
+        data: false,
+      });
+    }
+    return res.status(200).json({
+      status: true,
+      message: "Faculty retrieved successfully",
+      data: faculty,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      status: false,
+      message: "Internal server error " + error,
+      data: false,
+    });
+  }
+};
+const deleteFaculty = async (req, res) => {
+  try {
+    const { _id } = req.query;
+    if (!mongoose.Types.ObjectId.isValid(_id)) {
+      return res.status(400).json({
+        status: false,
+        message: "Invalid faculty _id!",
+        data: false,
+      });
+    }
+    const faculty = await Faculty.findOneAndUpdate(
+      { _id },
+      { deleteflag: true, status: false },
+      { new: true }
+    );
+
+    if (!faculty) {
+      return res.status(400).json({
+        status: false,
+        message: "Faculty does not exist!",
+        data: false,
+      });
+    }
+    const department = await Departments.findById(faculty.department);
+    if (department) {
+      department.faculty = department.faculty.filter(
+        (faculty) => faculty.toString() !== _id
+      );
+      await department.save();
+    }
+    return res.status(200).json({
+      status: true,
+      message: "Faculty deleted successfully",
+      data: faculty,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      status: false,
+      message: "Internal server error " + error,
+      data: false,
+    });
+  }
+};
 module.exports = {
   create,
   update,
   findById,
   getAll,
   getByDepartment,
+  search,
+  deleteFaculty,
 };

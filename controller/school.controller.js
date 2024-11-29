@@ -198,14 +198,22 @@ const search = async (req, res) => {
   try {
     const { search, page = 1, limit = 10 } = req.query;
 
-    // Ensure page and limit are positive integers
-    const pageNum = parseInt(page, 10) || 1;
-    const limitNum = parseInt(limit, 10) || 10;
+    // Validate page and limit to be positive integers
+    const pageNum = parseInt(page, 10);
+    const limitNum = parseInt(limit, 10);
 
-    if (pageNum < 1 || limitNum < 1) {
+    if (isNaN(pageNum) || pageNum < 1) {
       return res.status(400).json({
         status: false,
-        message: "Page and limit must be positive integers",
+        message: "Page must be a positive integer.",
+        data: false,
+      });
+    }
+
+    if (isNaN(limitNum) || limitNum < 1) {
+      return res.status(400).json({
+        status: false,
+        message: "Limit must be a positive integer.",
         data: false,
       });
     }
@@ -215,29 +223,35 @@ const search = async (req, res) => {
 
     // Build query conditionally based on the search parameter
     const query = search
-      ? { name: { $regex: search, $options: "i" } } // Search by name
-      : {}; // Fetch all records
+      ? { name: { $regex: search, $options: "i" } } // Case-insensitive name search
+      : {}; // No filtering, fetch all records
 
-    // Fetch schools with pagination
+    // Fetch schools with pagination and populate departments
     const schools = await School.find(query)
       .skip(skip)
       .limit(limitNum)
       .populate("departments")
-      .exec();
-
-    // Check if any schools were found
-    if (!schools.length) {
-      return res
-        .status(204)
-        .json({ status: false, message: "No schools found", data: false });
-    }
-
-    // Count total schools matching the criteria
+      .exec();  
+    // Count total documents matching the query
     const totalSchools = await School.countDocuments(query);
 
+    // Handle empty results
+    if (!schools.length) {
+      return res.status(200).json({
+        status: true,
+        message: "No schools found.",
+        data: {
+          schools: [],
+          total: totalSchools,
+          page: pageNum,
+          totalPages: Math.ceil(totalSchools / limitNum),
+        },
+      });
+    }
+    // Respond with paginated results
     return res.status(200).json({
       status: true,
-      message: "Schools found",
+      message: "Schools found.",
       data: {
         schools,
         total: totalSchools,
@@ -246,13 +260,17 @@ const search = async (req, res) => {
       },
     });
   } catch (error) {
+    console.error("Error in search API:", error);
+
+    // Handle server errors
     return res.status(500).json({
       status: false,
-      message: error.message,
+      message: "An error occurred while processing the request.",
       data: false,
     });
   }
 };
+
 module.exports = {
   create,
   findAll,

@@ -8,23 +8,23 @@ const create = async (req, res) => {
       school,
       description,
       departmentCode,
-      headOfDepartment,
+      // headOfDepartment,
       programsOffered,
     } = req.body;
 
     // Validate required fields
-    if (
-      !name ||
-      !departmentCode ||
-      // !headOfDepartment ||
-      !programsOffered ||
-      !school ||
-      !description
-    ) {
+    const missings = [];
+    if (!name) missings.push("name");
+    if (!departmentCode) missings.push("departmentCode");
+    // if (!headOfDepartment) missings.push("headOfDepartment");
+    if (!programsOffered) missings.push("programsOffered");
+    if (!school) missings.push("school");
+    if (!description) missings.push("description");
+    if (missings.length > 0) {
       return res.status(400).json({
         status: false,
-        message: "Content can not be empty!",
-        data: false,
+        message: "Missing required fields! " + missings.join(", "),
+        data: missings,
       });
     }
     let schoolExists;
@@ -46,25 +46,24 @@ const create = async (req, res) => {
         }
       }
     }
-    if (headOfDepartment) {
-      if (mongoose.Types.ObjectId.isValid(headOfDepartment) === false) {
-        return res.status(400).json({
-          status: false,
-          message: "Invalid headOfDepartment _id!",
-          data: false,
-        });
-      } else {
-        const facultyExists = await Faculty.findOne({ _id: headOfDepartment });
-        if (!facultyExists) {
-          return res.status(400).json({
-            status: false,
-            message: "Faculty does not exist!",
-            data: false,
-          });
-        }
-      }
-    }
-
+    // if (headOfDepartment) {
+    //   if (mongoose.Types.ObjectId.isValid(headOfDepartment) === false) {
+    //     return res.status(400).json({
+    //       status: false,
+    //       message: "Invalid headOfDepartment _id!",
+    //       data: false,
+    //     });
+    //   } else {
+    //     const facultyExists = await Faculty.findOne({ _id: headOfDepartment });
+    //     if (!facultyExists) {
+    //       return res.status(400).json({
+    //         status: false,
+    //         message: "Faculty does not exist!",
+    //         data: false,
+    //       });
+    //     }
+    //   }
+    // }
     // Check for duplicate department
     const departmentExists = await Departments.findOne({
       departmentCode,
@@ -83,7 +82,7 @@ const create = async (req, res) => {
       school,
       description,
       departmentCode,
-      headOfDepartment,
+      // headOfDepartment,
       programsOffered,
       status: true,
       deleteflg: false,
@@ -123,7 +122,7 @@ const update = async (req, res) => {
       school,
       description,
       departmentCode,
-      headOfDepartment,
+      // headOfDepartment,
       programsOffered,
       faculty,
     } = req.body;
@@ -238,7 +237,7 @@ const update = async (req, res) => {
         school,
         description,
         departmentCode,
-        headOfDepartment,
+        // headOfDepartment,
         programsOffered,
         faculty,
       },
@@ -418,10 +417,56 @@ const getbySchool = async (req, res) => {
     });
   }
 };
+const search = async (req, res) => {
+  try {
+    const { search } = req.query;
+    if (!search) {
+      return res.status(400).json({
+        status: false,
+        message: "Search key is required!",
+        data: false,
+      });
+    }
+    const departments = await Departments.find({
+      $or: [
+        { name: { $regex: search, $options: "i" } },
+        { departmentCode: { $regex: search, $options: "i" } },
+        { description: { $regex: search, $options: "i" } },
+      ],
+      status: true,
+      deleteflag: false,
+    })
+      .populate("school") // Populate school data if it's a reference field
+      .populate("faculty") // Populate faculty data if applicable
+      .exec();
+    // Check if department exists
+    if (departments) {
+      return res.status(200).json({
+        status: true,
+        message: "Department retrieved successfully!",
+        data: departments,
+      });
+    } else {
+      return res.status(404).json({
+        status: false,
+        message: "Department not found!",
+        data: false,
+      });
+    }
+  } catch (error) {
+    // Return error response if something goes wrong
+    return res.status(500).json({
+      status: false,
+      message: `Error retrieving department: ${error.message}`,
+      data: false,
+    });
+  }
+};
 module.exports = {
   create,
   findAll,
   findById,
   update,
   getbySchool,
+  search,
 };
