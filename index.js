@@ -27,6 +27,10 @@ const {
   componentRouter,
 } = require("./routes");
 
+app.get('/health-check', (req, res) => {
+  res.status(200).send("Everything Is Fine " + Date.now())
+})
+
 // Admin Router
 app.use("/api/auth", adminRouter);
 
