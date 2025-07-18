@@ -24,6 +24,7 @@ const {
   circulerRouter,
   announcementRouter,
   highlightBannerRouter,
+  componentRouter,
 } = require("./routes");
 
 // Admin Router
@@ -49,12 +50,15 @@ app.use("/api/faculty", facultyRouter);
 
 // static-page page
 app.use("/api/static-page", staticPageRouter);
- 
+
 // static-page page
 app.use("/api/announcement", announcementRouter);
 
 // static-page page
 app.use("/api/highlight-banner", highlightBannerRouter);
+
+// static-page page
+app.use("/api/components", componentRouter);
 
 // Start the server
 app.listen(PORT || 3000, () => {

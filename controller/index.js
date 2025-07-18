@@ -8,6 +8,7 @@ const facultyController = require("./faculty.controller");
 const staticPageController = require("./staticPage.controller");
 const announcementController = require("./announcement.controller");
 const highlightBannerController = require("./highlightBanner.controller");
+const componentsController = require('./components.controller')
 module.exports = {
   adminController,
   slugController,
@@ -19,4 +20,5 @@ module.exports = {
   staticPageController,
   announcementController,
   highlightBannerController,
+  componentsController
 };

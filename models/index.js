@@ -8,6 +8,7 @@ const Faculty = require("./faculty.model");
 const Toppers = require("./topperList.model");
 const Announcements = require("./announcement.model");
 const HighlightBanner = require("./highlightBanner.model");
+const Components = require('./Components.model')
 module.exports = {
   Admin,
   Slug,
@@ -19,4 +20,5 @@ module.exports = {
   Toppers,
   Announcements,
   HighlightBanner,
+  Components
 };

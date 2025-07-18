@@ -31,214 +31,6 @@ function createPathFromTitle(title) {
 
   return "/" + path;
 }
-// const insert = async (req, res) => {
-//   try {
-//     // Destructure the request body with default values
-//     const {
-//       parent_id = 0,
-//       clg_id = 1,
-//       languageId = 1,
-//       price = 0,
-//       name,
-//       date,
-//       shortdesc,
-//       description,
-//       // params
-//       param1,
-//       paramvalue1,
-//       param_img1,
-//       param_url1,
-//       param2,
-//       paramvalue2,
-//       param_img2,
-//       param_url2,
-//       param3,
-//       paramvalue3,
-//       param_img3,
-//       param_url3,
-//       param4,
-//       paramvalue4,
-//       param_img4,
-//       param_url4,
-//       param5,
-//       paramvalue5,
-//       param_img5,
-//       param_url5,
-//       param6,
-//       paramvalue6,
-//       param_img6,
-//       param_url6,
-//       param7,
-//       paramvalue7,
-//       param_img7,
-//       param_url7,
-//       param8,
-//       paramvalue8,
-//       param_img8,
-//       param_url8,
-//       param9,
-//       paramvalue9,
-//       param_img9,
-//       param_url9,
-//       param10,
-//       paramvalue10,
-//       param_img10,
-//       param_url10,
-//       banner_img,
-//       metatitle,
-//       metadesc,
-//       keywords_tag,
-//       tag1,
-//       tag2,
-//       tag3,
-//       schemaid,
-//       nic_name,
-//       col_width,
-//       featured_img,
-//       video_url,
-//       type,
-//       old_url,
-//       status = true,
-//       addedby = "Admin",
-//     } = req.body;
-
-//     // Validate required fields
-//     if (!name) {
-//       return res.status(400).json({
-//         status: false,
-//         message: "Missing required fields",
-//         data: false,
-//       });
-//     }
-
-//     // Generate slug and path
-//     const slug = createPathFromTitle(name);
-//     let path;
-//     let parentSlugDoc;
-//     if (parent_id === 0) {
-//       path = slug; // Root level
-//     } else {
-//       parentSlugDoc = await Slug.findOne({ page_id: parent_id });
-//       if (!parentSlugDoc) {
-//         return res.status(400).json({
-//           status: false,
-//           message: "Parent slug not found",
-//           data: false,
-//         });
-//       }
-//       path = `${parentSlugDoc.path}${slug}`; // Append slug to parent path
-//     }
-
-//     // Check if the slug already exists
-//     const existingSlug = await Slug.findOne({ slug });
-//     if (existingSlug) {
-//       return res
-//         .status(400)
-//         .json({ status: false, message: "Slug already exists", data: false });
-//     }
-
-//     // Fetch existing IDs from the database
-//     const existingSlugs = await Slug.find().select("page_id");
-//     const existingIds = existingSlugs.map((slug) => slug.page_id);
-//     const page_id = await generateUniqueId(existingIds);
-
-//     // Prepare id_path
-//     let id_path = parentSlugDoc?.id_path
-//       ? `${parentSlugDoc?.id_path}/${page_id}`
-//       : `/${page_id}`;
-
-//     // Create a new slug object
-//     const newSlug = new Slug({
-//       page_id,
-//       parent_id,
-//       clg_id,
-//       languageId,
-//       price,
-//       name,
-//       shortdesc,
-//       description,
-//       param1,
-//       paramvalue1,
-//       param_img1,
-//       param_url1,
-//       param2,
-//       paramvalue2,
-//       param_img2,
-//       param_url2,
-//       param3,
-//       paramvalue3,
-//       param_img3,
-//       param_url3,
-//       param4,
-//       paramvalue4,
-//       param_img4,
-//       param_url4,
-//       param5,
-//       paramvalue5,
-//       param_img5,
-//       param_url5,
-//       param6,
-//       paramvalue6,
-//       param_img6,
-//       param_url6,
-//       param7,
-//       paramvalue7,
-//       param_img7,
-//       param_url7,
-//       param8,
-//       paramvalue8,
-//       param_img8,
-//       param_url8,
-//       param9,
-//       paramvalue9,
-//       param_img9,
-//       param_url9,
-//       param10,
-//       paramvalue10,
-//       param_img10,
-//       param_url10,
-//       banner_img,
-//       slug,
-//       metatitle,
-//       metadesc,
-//       keywords_tag,
-//       tag1,
-//       tag2,
-//       tag3,
-//       schemaid,
-//       nic_name,
-//       col_width,
-//       featured_img,
-//       video_url,
-//       date: date || Date.now(),
-//       featured_status: false,
-//       type,
-//       path,
-//       id_path,
-//       old_url,
-//       status,
-//       addedon: Date.now(),
-//       addedby,
-//       editedon: null,
-//       editedby: null,
-//       deleteflag: false,
-//     });
-
-//     // Save the new slug to the database
-//     await newSlug.save();
-//     res.status(201).json({
-//       status: true,
-//       message: "Slug created successfully",
-//       data: newSlug,
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     res
-//       .status(500)
-//       .json({ status: false, message: "Server error", data: false });
-//   }
-// };
-
 const update = async (req, res) => {
   try {
     // Destructure the request body with default values
@@ -553,230 +345,6 @@ const addPageInactive = async (req, res) => {
       .json({ status: false, message: "Server error", data: false });
   }
 };
-// const insert = async (req, res) => {
-//     console.log("Entered");
-
-//     try {
-//         const {
-//             parent_id = 0,      // Default value
-//             clg_id = 1,         // Default value
-//             languageId = 1,     // Default value
-//             price = 0,          // Default value
-//             name,
-//             date,
-//             shortdesc,
-//             description,//3
-//             param1,
-//             paramvalue1,
-//             param_img1,
-//             param_url1,
-//             param2,
-//             paramvalue2,
-//             param_img2,
-//             param_url2,
-//             param3,
-//             paramvalue3,
-//             param_img3,
-//             param_url3,
-//             param4,
-//             paramvalue4,
-//             param_img4,
-//             param_url4,
-//             param5,
-//             paramvalue5,
-//             param_img5,
-//             param_url5,
-//             param6,
-//             paramvalue6,
-//             param_img6,
-//             param_url6,
-//             param7,
-//             paramvalue7,
-//             param_img7,
-//             param_url7,
-//             param8,
-//             paramvalue8,
-//             param_img8,
-//             param_url8,
-//             param9,
-//             paramvalue9,
-//             param_img9,
-//             param_url9,
-//             param10,
-//             paramvalue10,
-//             param_img10,
-//             param_url10,
-//             banner_img,
-//             metatitle,
-//             metadesc,
-//             keywords_tag,
-//             tag1,
-//             tag2,
-//             tag3,
-//             schemaid,
-//             nic_name,
-//             col_width,
-//             featured_img,
-//             video_url,
-//             type,
-//             old_url,
-//             status = true,      // Default value
-//             addedby = "Admin",  // Default value
-//         } = req.body;
-
-//         let path;
-//         let slug = createPathFromTitle(name);
-//         console.log(slug);
-
-//         if (parent_id === 0) {
-//             path = slug
-//         } else {
-//             const res = Slug.find({ page_id: parent_id }).select('path');
-//             path += res + slug;
-//         }
-//         console.log(path);
-
-//         if (!name) {
-//             return res.status(400).json({ status: false, message: 'Missing required fields', data: false });
-//         }
-
-//         // Check if the slug already exists
-//         const existingSlug = await Slug.findOne({ slug });
-//         if (existingSlug) {
-//             return res.status(400).json({ status: false, message: 'Slug already exists', data: false });
-//         }
-
-//         // Fetch existing IDs from the database
-//         const existingSlugs = await Slug.find().select('page_id');
-//         const existingIds = existingSlugs.map(slug => slug.page_id);
-//         const page_id = await generateUniqueId(existingIds);
-
-//         // Split the path to get individual segments
-//         const pathSegments = path.split('/').filter(segment => segment); // Remove empty segments
-//         // if (pathSegments[pathSegments.length - 1] !== slug) {
-//         //     return res.status(400).json({ status: false, message: 'Slug and path segment do not match', data: false });
-//         // }
-//         if (!path.endsWith('/')) {
-//             path += "/"
-//         }
-//         // Fetch the parent slug ID if there are multiple path segments
-//         let parentId = parent_id;
-//         console.log(pathSegments);
-//         if (pathSegments.length > 1) {
-//             console.log("entered In this code");
-
-//             const parentSlug = pathSegments[pathSegments.length - 2]; // Second last segment of path
-
-//             // Find the parent slug by its slug
-//             const parentSlugDoc = await Slug.findOne({ slug: parentSlug });
-//             if (parentSlugDoc) {
-//                 parentId = parentSlugDoc.page_id;
-//             } else {
-//                 return res.status(400).json({ status: false, message: `Parent slug not found for path segment: ${parentSlug}`, data: false });
-//             }
-//         }
-
-//         // Generate id_path based on the new slug's page_id
-//         const idPathSegments = await Promise.all(pathSegments.map(async (segment) => {
-//             const existingSlug = await Slug.findOne({ slug: segment });
-//             return existingSlug ? existingSlug.page_id : null; // Return the page_id or null
-//         }));
-//         console.log(idPathSegments);
-
-//         let id_path = idPathSegments.filter(id => id !== null).join('/'); // Filter out nulls and join
-//         console.log(id_path);
-//         id_path += "/"
-//         id_path += page_id;
-
-//         console.log(page_id);
-//         console.log(id_path);
-
-//         // Create a new slug object
-//         const newSlug = new Slug({
-//             page_id,
-//             parent_id: parentId,  // Set parent_id based on the path logic above
-//             clg_id,
-//             languageId,
-//             price,
-//             name,
-//             shortdesc,
-//             description,
-//             param1,
-//             paramvalue1,
-//             param_img1,
-//             param_url1,
-//             param2,
-//             paramvalue2,
-//             param_img2,
-//             param_url2,
-//             param3,
-//             paramvalue3,
-//             param_img3,
-//             param_url3,
-//             param4,
-//             paramvalue4,
-//             param_img4,
-//             param_url4,
-//             param5,
-//             paramvalue5,
-//             param_img5,
-//             param_url5,
-//             param6,
-//             paramvalue6,
-//             param_img6,
-//             param_url6,
-//             param7,
-//             paramvalue7,
-//             param_img7,
-//             param_url7,
-//             param8,
-//             paramvalue8,
-//             param_img8,
-//             param_url8,
-//             param9,
-//             paramvalue9,
-//             param_img9,
-//             param_url9,
-//             param10,
-//             paramvalue10,
-//             param_img10,
-//             param_url10,
-//             banner_img,
-//             slug,
-//             metatitle,
-//             metadesc,
-//             keywords_tag,
-//             tag1,
-//             tag2,
-//             tag3,
-//             schemaid,
-//             nic_name,
-//             col_width,
-//             featured_img,
-//             video_url,
-//             date: date || Date.now(),    // Set date to now
-//             featured_status: false, // Default value
-//             type,
-//             path,
-//             id_path,
-//             old_url,
-//             status,
-//             addedon: Date.now(),   // Set addedon to now
-//             addedby,
-//             editedon: null,        // Initially null
-//             editedby: null,        // Initially null
-//             deleteflag: false,     // Default value
-//         });
-
-//         // Save the new slug to the database
-//         await newSlug.save();
-//         res.status(201).json({ status: true, message: 'Slug created successfully', data: newSlug });
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({ status: false, message: 'Server error', data: false });
-//     }
-// };
-
 const getParent = async (req, res) => {
   const { query = "", page = 1, limit = 10, type, } = req.body; // Allow parentId to be dynamic, default to 0
 
@@ -944,6 +512,43 @@ const getById = async (req, res) => {
     });
   }
 };
+const getBySlug = async (req, res) => {
+  try {
+    const { slug } = req.query;
+
+    if (!slug) {
+      return res.status(400).json({
+        status: false,
+        message: "Slug is required",
+        data: false
+      });
+    }
+
+    const data = await Slug.findOne({ slug });
+
+    if (data) {
+      return res.status(200).json({
+        status: true,
+        message: "Data fetched successfully",
+        data: data
+      });
+    } else {
+      return res.status(404).json({
+        status: false,
+        message: "No data found for the given slug",
+        data: false
+      });
+    }
+
+  } catch (error) {
+    console.error("Error in getBySlug:", error);
+    return res.status(500).json({
+      status: false,
+      message: "Internal Server Error",
+      data: false
+    });
+  }
+};
 module.exports = {
   // insert,
   getParent,
@@ -952,4 +557,5 @@ module.exports = {
   update,
   getSlugByType,
   getById,
+  getBySlug
 };

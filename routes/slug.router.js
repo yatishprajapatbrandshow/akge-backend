@@ -22,4 +22,6 @@ router.get("/getbytype", slugController.getSlugByType);
 // // Route to get all slugs
 router.get("/getbyid", slugController.getById);
 
+router.get('/', slugController.getBySlug)
+
 module.exports = router;
