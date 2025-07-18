@@ -518,17 +518,17 @@ const getById = async (req, res) => {
 };
 const getBySlug = async (req, res) => {
   try {
-    const { slug } = req.query;
+    const { path } = req.query;
 
-    if (!slug) {
+    if (!path) {
       return res.status(400).json({
         status: false,
-        message: "Slug is required",
+        message: "path is required",
         data: false
       });
     }
 
-    const data = await Slug.findOne({ slug });
+    const data = await Slug.findOne({ path });
 
     if (data) {
       return res.status(200).json({
