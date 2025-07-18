@@ -103,6 +103,7 @@ const update = async (req, res) => {
       status = true,
       deleteflag = false,
       editedby = "Admin",
+      ComponentType
     } = req.body;
 
     // Validate required fields
@@ -240,6 +241,7 @@ const update = async (req, res) => {
         editedon: Date.now(),
         editedby,
         deleteflag,
+        ComponentType
       },
       { new: true } // Return the updated document
     );
@@ -265,6 +267,7 @@ const addPageInactive = async (req, res) => {
       price = 0,
       type,
       name,
+      ComponentType
     } = req.body;
     // Validate required fields
     if (!name) {
@@ -329,6 +332,7 @@ const addPageInactive = async (req, res) => {
       editedon: null,
       editedby: null,
       deleteflag: false,
+      ComponentType
     });
 
     // Save the new slug to the database
