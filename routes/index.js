@@ -10,11 +10,13 @@ const announcementRouter = require("./announcements.router");
 const highlightBannerRouter = require("./highlight-banner.router");
 const componentRouter = require('./components.router')
 const extraParamsDataRouter = require('./extraParamsData.router')
+const editPathRouter = require("./EditPath.router");
 module.exports = {
   adminRouter,
   slugRouter,
   metaRouter,
   circulerRouter,
+  editPathRouter,
   schoolRouter,
   departmentRouter,
   facultyRouter,
