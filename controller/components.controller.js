@@ -37,7 +37,7 @@ exports.getAllComponents = async (req, res) => {
     try {
         const { search = '', page = 1, limit = 10 } = req.query;
         console.log("Entered");
-        
+
         const query = {
             deleteflag: false,
             $or: [
@@ -66,6 +66,53 @@ exports.getAllComponents = async (req, res) => {
         res.json({
             status: false,
             message: "Error fetching components",
+            data: false
+        });
+    }
+};
+
+exports.getComponentsByCategory = async (req, res) => {
+    try {
+        // 1. Get category from the URL's route parameters
+        const { categoryName } = req.params;
+
+        // 2. Get pagination details from the query string
+        const { page = 1, limit = 10 } = req.query;
+
+        // 3. Construct the query to find documents
+        const query = {
+            deleteflag: false,
+            status: "Active",
+            category: categoryName // Directly filter by the category name
+        };
+
+        const skip = (parseInt(page) - 1) * parseInt(limit);
+
+        // 4. Execute database queries concurrently for efficiency
+        const [components, total] = await Promise.all([
+            Components.find(query)
+                .select('componentName')
+                .skip(skip)
+                .limit(parseInt(limit)),
+            Components.countDocuments(query)
+        ]);
+
+        // 5. Send the structured JSON response
+        res.json({
+            status: true,
+            message: `Data fetched for category: ${categoryName}`,
+            data: components,
+            total,
+            currentPage: parseInt(page),
+            totalPages: Math.ceil(total / parseInt(limit))
+        });
+
+    } catch (err) {
+        // 6. Handle potential server errors
+        console.error("Error in getComponentsByCategory:", err); // Log the error for debugging
+        res.status(500).json({
+            status: false,
+            message: "Error fetching components by category",
             data: false
         });
     }
