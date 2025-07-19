@@ -9,6 +9,7 @@ const staticPageRouter = require("./staticPage.router");
 const announcementRouter = require("./announcements.router");
 const highlightBannerRouter = require("./highlight-banner.router");
 const componentRouter = require('./components.router')
+const extraParamsDataRouter = require('./extraParamsData.router')
 module.exports = {
   adminRouter,
   slugRouter,
@@ -20,5 +21,6 @@ module.exports = {
   staticPageRouter,
   announcementRouter,
   highlightBannerRouter,
-  componentRouter
+  componentRouter,
+  extraParamsDataRouter
 };
