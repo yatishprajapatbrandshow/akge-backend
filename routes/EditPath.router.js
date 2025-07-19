@@ -3,6 +3,6 @@ const router = express.Router();
 
 const { editPathController} = require("../controller");
 
-router.post('/edit-path', editPathController.editPath);
+router.post('/all', editPathController.editPath);
 
 module.exports = router;
