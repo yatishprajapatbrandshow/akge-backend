@@ -538,7 +538,7 @@ const getBySlug = async (req, res) => {
       path = '/' + path;
     }
 
-    const data = await Slug.findOne({ path, deleteflag: false ,status:'Active'});
+    const data = await Slug.findOne({ path, deleteflag: false ,status:true});
 
     if (data) {
       return res.status(200).json({
