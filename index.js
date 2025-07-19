@@ -25,6 +25,7 @@ const {
   announcementRouter,
   highlightBannerRouter,
   componentRouter,
+  editPathRouter
 } = require("./routes");
 
 app.get('/health-check', (req, res) => {
@@ -63,6 +64,9 @@ app.use("/api/highlight-banner", highlightBannerRouter);
 
 // static-page page
 app.use("/api/components", componentRouter);
+
+// Edit Path Router
+app.use("/api/edit-path", editPathRouter);
 
 // Start the server
 app.listen(PORT || 3000, () => {
