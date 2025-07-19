@@ -518,14 +518,24 @@ const getById = async (req, res) => {
 };
 const getBySlug = async (req, res) => {
   try {
-    const { path } = req.query;
+    let { path } = req.query;
 
     if (!path) {
       return res.status(400).json({
         status: false,
         message: "path is required",
-        data: false
+        data: false,
       });
+    }
+
+    // Remove query parameters (everything after ?)
+    if (path.includes('?')) {
+      path = path.split('?')[0];
+    }
+
+    // Ensure path starts with /
+    if (!path.startsWith('/')) {
+      path = '/' + path;
     }
 
     const data = await Slug.findOne({ path });
@@ -534,25 +544,25 @@ const getBySlug = async (req, res) => {
       return res.status(200).json({
         status: true,
         message: "Data fetched successfully",
-        data: data
+        data: data,
       });
     } else {
       return res.status(404).json({
         status: false,
         message: "No data found for the given slug",
-        data: false
+        data: false,
       });
     }
-
   } catch (error) {
     console.error("Error in getBySlug:", error);
     return res.status(500).json({
       status: false,
       message: "Internal Server Error",
-      data: false
+      data: false,
     });
   }
 };
+
 module.exports = {
   // insert,
   getParent,
