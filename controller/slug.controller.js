@@ -425,7 +425,7 @@ const getParent = async (req, res) => {
 
 const getList = async (req, res) => {
   try {
-    const slugs = await Slug.find({ status: true, deleteflag: false });
+    const slugs = await Slug.find({ });
     if (slugs.length === 0) {
       return res.status(200).json({
         status: true,
