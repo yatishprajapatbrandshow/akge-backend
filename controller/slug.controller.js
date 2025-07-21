@@ -1,4 +1,4 @@
-const { Slug } = require("../models");
+const { Slug, ExtraParamsData } = require("../models");
 const bcrypt = require("bcryptjs");
 // const jwt = require('jsonwebtoken');
 const generateUniqueId = async (existingIds) => {
@@ -519,7 +519,6 @@ const getById = async (req, res) => {
 const getBySlug = async (req, res) => {
   try {
     let { path } = req.query;
-
     if (!path) {
       return res.status(400).json({
         status: false,
@@ -539,12 +538,17 @@ const getBySlug = async (req, res) => {
     }
 
     const data = await Slug.findOne({ path, deleteflag: false, status: true });
-
+    // Extra Component Data
+    const extraParamsData = await ExtraParamsData.find({ pageid: data.page_id, status: true, deleteflag: false })
+    const finalData = {
+      ...data,
+      extraComponentData: extraParamsData || false
+    }
     if (data) {
       return res.status(200).json({
         status: true,
         message: "Data fetched successfully",
-        data: data,
+        data: finalData,
       });
     } else {
       return res.status(404).json({
