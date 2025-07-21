@@ -516,10 +516,32 @@ const getById = async (req, res) => {
     });
   }
 };
+const buildBreadcrumb = async (slugDoc) => {
+  const breadcrumb = [];
+  let current = slugDoc;
+
+  while (current?.parent_id) {
+    const parent = await Slug.findOne({ page_id: current.parent_id, status: true, deleteflag: false }).lean();
+    if (!parent) break;
+    breadcrumb.unshift({
+      name: parent?.title || parent?.name || "Untitled",
+      Link: parent?.path,
+    });
+    current = parent;
+  }
+
+  // Add current page as last item
+  breadcrumb.push({
+    name: slugDoc?.title || slugDoc?.name || "Current Page",
+    Link: slugDoc?.path,
+  });
+
+  return breadcrumb;
+};
+
 const getBySlug = async (req, res) => {
   try {
     let { path } = req.query;
-    console.log(path);
 
     if (!path) {
       return res.status(400).json({
@@ -529,12 +551,11 @@ const getBySlug = async (req, res) => {
       });
     }
 
-    // Remove query parameters (everything after ?)
+    // Remove query params if any
     if (path.includes('?')) {
       path = path.split('?')[0];
     }
 
-    // Ensure path starts with /
     if (!path.startsWith('/')) {
       path = '/' + path;
     }
@@ -544,28 +565,45 @@ const getBySlug = async (req, res) => {
       return res.status(404).json({
         status: false,
         data: false,
-        message: 'path not found '
-      })
+        message: 'path not found',
+      });
     }
-    // Extra Component Data
-    const extraParamsData = await ExtraParamsData.find({ pageid: data?.page_id, status: true, deleteflag: false }).lean()
+
+    // Get breadcrumb
+    const breadcrumb = await buildBreadcrumb(data);
+    // Get extra component data
+    const extraParamsData = await ExtraParamsData.find({
+      pageid: data?.page_id,
+      status: true,
+      deleteflag: false
+    })
+      .select('param paramDesc paramImg paramUrl orderSequence holder calid')
+      .lean();
+
+    // Normalize and transform array to object
+    const formattedExtraParams = extraParamsData.reduce((acc, item) => {
+      const normalizedKey = item.holder.toLowerCase().replace(/\s+/g, '');
+      if (!acc[normalizedKey]) {
+        acc[normalizedKey] = {};
+      }
+      acc[normalizedKey]=item;
+      return acc;
+    }, {});
+
+
+
     const finalData = {
       ...data,
-      extraComponentData: extraParamsData || false
-    }
-    if (data) {
-      return res.status(200).json({
-        status: true,
-        message: "Data fetched successfully",
-        data: finalData,
-      });
-    } else {
-      return res.status(404).json({
-        status: false,
-        message: "No data found for the given slug",
-        data: false,
-      });
-    }
+      extraComponentData: formattedExtraParams || false,
+      breadCrumb: breadcrumb || false,
+    };
+
+    return res.status(200).json({
+      status: true,
+      message: "Data fetched successfully",
+      data: finalData,
+    });
+
   } catch (error) {
     console.error("Error in getBySlug:", error);
     return res.status(500).json({
@@ -575,6 +613,7 @@ const getBySlug = async (req, res) => {
     });
   }
 };
+
 
 module.exports = {
   // insert,
