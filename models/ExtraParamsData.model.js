@@ -20,6 +20,6 @@ const ParamSchema = new mongoose.Schema({
 });
 
 // Enforce unique constraint on combination of pageid and holder
-ParamSchema.index({ pageid: 1, holder: 1 }, { unique: true });
+ParamSchema.index({ pageid: 1, holder: 1 });
 
 module.exports = mongoose.model('ExtraParamsData', ParamSchema);

@@ -82,12 +82,10 @@ exports.deleteParam = async (req, res) => {
 exports.getUsedHoldersByPageId = async (req, res) => {
     try {
         const pageid = req.params.pageid;
-        console.log(pageid);
         const usedHolders = await ExtraParamsData.find(
             { pageid: pageid, deleteflag: false },
             { holder: 1, _id: 0 }
         );
-        console.log(usedHolders);
 
         const holderList = usedHolders.map(item => item.holder);
 
