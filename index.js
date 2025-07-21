@@ -27,7 +27,8 @@ const {
   componentRouter,
   extraParamsDataRouter,
   editPathRouter,
-  newsDetailPageRouter
+  newsDetailPageRouter,
+  uploadRouter
 } = require("./routes");
 
 app.get('/health-check', (req, res) => {
@@ -71,6 +72,8 @@ app.use("/api/components", componentRouter);
 app.use("/api/extra-component-data", extraParamsDataRouter);
 // Edit Path Router
 app.use("/api/edit-path", editPathRouter);
+// Edit Path Router
+app.use("/api/upload", uploadRouter);
 
 // News Detail Page Router
 app.use("/api/news-detail-page", newsDetailPageRouter);
