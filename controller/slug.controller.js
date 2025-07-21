@@ -519,6 +519,8 @@ const getById = async (req, res) => {
 const getBySlug = async (req, res) => {
   try {
     let { path } = req.query;
+    console.log(path);
+
     if (!path) {
       return res.status(400).json({
         status: false,
@@ -537,9 +539,16 @@ const getBySlug = async (req, res) => {
       path = '/' + path;
     }
 
-    const data = await Slug.findOne({ path, deleteflag: false, status: true });
+    const data = await Slug.findOne({ path, deleteflag: false, status: true }).lean();
+    if (!data) {
+      return res.status(404).json({
+        status: false,
+        data: false,
+        message: 'path not found '
+      })
+    }
     // Extra Component Data
-    const extraParamsData = await ExtraParamsData.find({ pageid: data.page_id, status: true, deleteflag: false })
+    const extraParamsData = await ExtraParamsData.find({ pageid: data?.page_id, status: true, deleteflag: false }).lean()
     const finalData = {
       ...data,
       extraComponentData: extraParamsData || false
