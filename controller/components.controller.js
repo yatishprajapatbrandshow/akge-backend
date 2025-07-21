@@ -38,7 +38,6 @@ exports.createComponent = async (req, res) => {
 exports.getAllComponents = async (req, res) => {
     try {
         const { search = '', page = 1, limit = 10 } = req.query;
-        console.log("Entered");
 
         const query = {
             deleteflag: false,
