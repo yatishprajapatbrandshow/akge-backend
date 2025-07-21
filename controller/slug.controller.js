@@ -116,7 +116,7 @@ const update = async (req, res) => {
     }
 
     // Find the existing slug by page_id
-    const existingSlug = await Slug.findOne({ page_id, status: true, deleteflag: false });
+    const existingSlug = await Slug.findOne({ page_id });
     if (!existingSlug) {
       return res
         .status(404)
