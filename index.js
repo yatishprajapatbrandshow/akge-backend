@@ -27,6 +27,7 @@ const {
   componentRouter,
   extraParamsDataRouter,
   editPathRouter,
+  newsDetailPageRouter,
   uploadRouter
 } = require("./routes");
 
@@ -73,6 +74,9 @@ app.use("/api/extra-component-data", extraParamsDataRouter);
 app.use("/api/edit-path", editPathRouter);
 // Edit Path Router
 app.use("/api/upload", uploadRouter);
+
+// News Detail Page Router
+app.use("/api/news-detail-page", newsDetailPageRouter);
 
 // Start the server
 app.listen(PORT || 3000, () => {

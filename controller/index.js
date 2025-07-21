@@ -11,6 +11,8 @@ const highlightBannerController = require("./highlightBanner.controller");
 const componentsController = require('./components.controller')
 const extraParamsDataController = require('./extraParamsData.controller')
 const  editPathController = require('./EditPath.controller');
+const newsDetailPageController = require('./newsDetailPage.controller');
+
 const  uploadfileController = require('./upload.controller');
 module.exports = {
   adminController,
@@ -26,5 +28,6 @@ module.exports = {
   highlightBannerController,
   componentsController,
   extraParamsDataController,
+  newsDetailPageController,
   uploadfileController
 };
