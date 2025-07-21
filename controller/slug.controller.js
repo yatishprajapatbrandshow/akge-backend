@@ -116,7 +116,7 @@ const update = async (req, res) => {
     }
 
     // Find the existing slug by page_id
-    const existingSlug = await Slug.findOne({ page_id });
+    const existingSlug = await Slug.findOne({ page_id, status: true, deleteflag: false });
     if (!existingSlug) {
       return res
         .status(404)
@@ -134,6 +134,7 @@ const update = async (req, res) => {
       const duplicateSlug = await Slug.findOne({
         slug,
         page_id: { $ne: page_id },
+        status: true, deleteflag: false
       });
       if (duplicateSlug) {
         return res.status(400).json({
@@ -146,7 +147,7 @@ const update = async (req, res) => {
       if (parent_id === 0) {
         path = slug; // Root level
       } else {
-        const parentSlugDoc = await Slug.findOne({ page_id: parent_id });
+        const parentSlugDoc = await Slug.findOne({ page_id: parent_id, status: true, deleteflag: false });
         if (!parentSlugDoc) {
           return res.status(400).json({
             status: false,
@@ -161,7 +162,7 @@ const update = async (req, res) => {
     // Prepare id_path
     let id_path = existingSlug.id_path;
     if (parent_id !== existingSlug.parent_id) {
-      const parentSlugDoc = await Slug.findOne({ page_id: parent_id });
+      const parentSlugDoc = await Slug.findOne({ page_id: parent_id, status: true, deleteflag: false });
       id_path = parentSlugDoc?.id_path
         ? `${parentSlugDoc?.id_path}/${page_id}`
         : `/${page_id}`;
@@ -169,7 +170,7 @@ const update = async (req, res) => {
 
     // Update the slug fields
     const updatedSlug = await Slug.findOneAndUpdate(
-      { page_id },
+      { page_id, status: true, deleteflag: false },
       {
         parent_id,
         clg_id,
@@ -285,7 +286,7 @@ const addPageInactive = async (req, res) => {
     if (parent_id === 0) {
       path = slug; // Root level
     } else {
-      parentSlugDoc = await Slug.findOne({ page_id: parent_id });
+      parentSlugDoc = await Slug.findOne({ page_id: parent_id, status: true, deleteflag: false });
       if (!parentSlugDoc) {
         return res.status(400).json({
           status: false,
@@ -297,7 +298,7 @@ const addPageInactive = async (req, res) => {
     }
 
     // Check if the slug already exists
-    const existingSlug = await Slug.findOne({ slug });
+    const existingSlug = await Slug.findOne({ slug, status: true, deleteflag: false });
     if (existingSlug) {
       return res
         .status(400)
@@ -305,7 +306,7 @@ const addPageInactive = async (req, res) => {
     }
 
     // Fetch existing IDs from the database
-    const existingSlugs = await Slug.find().select("page_id");
+    const existingSlugs = await Slug.find({ status: true, deleteflag: false }).select("page_id");
     const existingIds = existingSlugs.map((slug) => slug.page_id);
     const page_id = await generateUniqueId(existingIds);
 
@@ -337,14 +338,14 @@ const addPageInactive = async (req, res) => {
 
     // Save the new slug to the database
     await newSlug.save();
-    res.status(201).json({
+    return res.status(201).json({
       status: true,
       message: "Slug created successfully",
       data: newSlug,
     });
   } catch (error) {
     console.error(error);
-    res
+    return res
       .status(500)
       .json({ status: false, message: "Server error", data: false });
   }
@@ -424,7 +425,7 @@ const getParent = async (req, res) => {
 
 const getList = async (req, res) => {
   try {
-    const slugs = await Slug.find({ deleteflag: false });
+    const slugs = await Slug.find({ status: true, deleteflag: false });
     if (slugs.length === 0) {
       return res.status(200).json({
         status: true,
@@ -452,7 +453,7 @@ const getSlugByType = async (req, res) => {
     if (!Array.isArray(type)) {
       type = type ? type.split(",") : [];
     }
-    const slugs = await Slug.find({ type: { $in: type }, deleteflag: false });
+    const slugs = await Slug.find({ type: { $in: type }, deleteflag: false, status: true });
 
     if (slugs.length === 0) {
       return res.status(200).json({
@@ -493,7 +494,7 @@ const getById = async (req, res) => {
         data: false,
       });
     }
-    const slug = await Slug.findOne({ page_id });
+    const slug = await Slug.findOne({ page_id,status: true, deleteflag: false });
 
     if (!slug) {
       return res.status(404).json({
@@ -538,7 +539,7 @@ const getBySlug = async (req, res) => {
       path = '/' + path;
     }
 
-    const data = await Slug.findOne({ path, deleteflag: false ,status:true});
+    const data = await Slug.findOne({ path, deleteflag: false, status: true });
 
     if (data) {
       return res.status(200).json({

@@ -23,6 +23,8 @@ exports.createComponent = async (req, res) => {
             data: saved
         });
     } catch (err) {
+        console.log(err);
+        
         res.json({
             status: false,
             message: "Error creating component",
