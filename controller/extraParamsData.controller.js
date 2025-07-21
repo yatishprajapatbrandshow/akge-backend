@@ -12,8 +12,8 @@ exports.createParam = async (req, res) => {
 
         const param = new ExtraParamsData(data);
         await param.save();
-
-        res.json({ status: true, message: "ExtraParamsData created", data: param });
+        
+        res.json({ status: true, message: "Holder Added SuccesssFully", data: param });
     } catch (error) {
         res.json({ status: false, message: error.message, data: false });
     }
@@ -88,7 +88,7 @@ exports.getUsedHoldersByPageId = async (req, res) => {
             { holder: 1, _id: 0 }
         );
         console.log(usedHolders);
-        
+
         const holderList = usedHolders.map(item => item.holder);
 
         res.json({
