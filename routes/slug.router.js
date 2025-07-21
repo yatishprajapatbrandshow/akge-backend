@@ -2,13 +2,16 @@ const express = require("express");
 const { slugController } = require("../controller");
 
 const router = express.Router();
+const multer = require("multer");
+const upload = multer({ storage: multer.memoryStorage() }); // or diskStorage
+
 
 // Route to create a new slug
 // router.post('/', slugController.insert);
 
 // Route to create a new slug
 router.post("/add", slugController.addPageInactive);
-router.post("/update", slugController.update);
+router.post("/update", upload.any(), slugController.update);
 
 // // Route to get all slugs
 router.post("/getParents", slugController.getParent);

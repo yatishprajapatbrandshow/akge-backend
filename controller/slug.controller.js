@@ -105,7 +105,6 @@ const update = async (req, res) => {
       editedby = "Admin",
       ComponentType
     } = req.body;
-    console.log(page_id, name);
 
     // Validate required fields
     if (!page_id || !name) {
@@ -147,7 +146,7 @@ const update = async (req, res) => {
       if (parent_id === 0) {
         path = slug; // Root level
       } else {
-        const parentSlugDoc = await Slug.findOne({ page_id: parent_id});
+        const parentSlugDoc = await Slug.findOne({ page_id: parent_id });
         if (!parentSlugDoc) {
           return res.status(400).json({
             status: false,
@@ -298,7 +297,7 @@ const addPageInactive = async (req, res) => {
     }
 
     // Check if the slug already exists
-    const existingSlug = await Slug.findOne({ slug});
+    const existingSlug = await Slug.findOne({ slug });
     if (existingSlug) {
       return res
         .status(400)
