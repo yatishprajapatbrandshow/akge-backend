@@ -494,7 +494,7 @@ const getById = async (req, res) => {
         data: false,
       });
     }
-    const slug = await Slug.findOne({ page_id,status: true, deleteflag: false });
+    const slug = await Slug.findOne({ page_id });
 
     if (!slug) {
       return res.status(404).json({
