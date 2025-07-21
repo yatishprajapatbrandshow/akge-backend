@@ -11,6 +11,7 @@ const highlightBannerRouter = require("./highlight-banner.router");
 const componentRouter = require('./components.router')
 const extraParamsDataRouter = require('./extraParamsData.router')
 const editPathRouter = require("./EditPath.router");
+const uploadRouter = require("./upload.router");
 module.exports = {
   adminRouter,
   slugRouter,
@@ -24,5 +25,6 @@ module.exports = {
   announcementRouter,
   highlightBannerRouter,
   componentRouter,
-  extraParamsDataRouter
+  extraParamsDataRouter,
+  uploadRouter
 };
