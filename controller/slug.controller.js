@@ -425,7 +425,7 @@ const getParent = async (req, res) => {
 
 const getList = async (req, res) => {
   try {
-    const slugs = await Slug.find({ });
+    const slugs = await Slug.find();
     if (slugs.length === 0) {
       return res.status(200).json({
         status: true,
@@ -453,7 +453,7 @@ const getSlugByType = async (req, res) => {
     if (!Array.isArray(type)) {
       type = type ? type.split(",") : [];
     }
-    const slugs = await Slug.find({ type: { $in: type }, deleteflag: false, status: true });
+    const slugs = await Slug.find({ type: { $in: type } });
 
     if (slugs.length === 0) {
       return res.status(200).json({
