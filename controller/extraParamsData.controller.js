@@ -7,7 +7,7 @@ exports.createParam = async (req, res) => {
         // Check if holder already exists for the same pageid
         const exists = await ExtraParamsData.findOne({ pageid: data.pageid, holder: data.holder, deleteflag: false });
         if (exists) {
-            return res.json({ status: false, message: "Holder already exists for this pageid", data: false });
+            return res.json({ status: false, message: `${data.holder} already exists for This Page`, data: false });
         }
 
         const param = new ExtraParamsData(data);
