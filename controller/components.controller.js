@@ -74,43 +74,48 @@ exports.getAllComponents = async (req, res) => {
 
 exports.getComponentsByCategory = async (req, res) => {
     try {
-        // 1. Get category from the URL's route parameters
         const { categoryName } = req.params;
+        const { search = '', page = 1, limit = 10 } = req.query;
 
-        // 2. Get pagination details from the query string
-        const { page = 1, limit = 10 } = req.query;
-
-        // 3. Construct the query to find documents
-        const query = {
+        // Base query always filters by category and status
+        const baseQuery = {
             deleteflag: false,
             status: "Active",
-            category: categoryName // Directly filter by the category name
+            category: categoryName
         };
 
-        const skip = (parseInt(page) - 1) * parseInt(limit);
+        // Add search conditions if search term exists
+        const finalQuery = search
+            ? {
+                ...baseQuery,
+                $or: [
+                    { componentName: { $regex: search, $options: 'i' } },
+                    { componentType: { $regex: search, $options: 'i' } }
+                ]
+            }
+            : baseQuery;
 
-        // 4. Execute database queries concurrently for efficiency
+        const skip = (parseInt(page) - 1) * parseInt(limit);
+        const parsedLimit = parseInt(limit);
+
         const [components, total] = await Promise.all([
-            Components.find(query)
-                .select('componentName')
+            Components.find(finalQuery)
                 .skip(skip)
-                .limit(parseInt(limit)),
-            Components.countDocuments(query)
+                .limit(parsedLimit),
+            Components.countDocuments(finalQuery)
         ]);
 
-        // 5. Send the structured JSON response
         res.json({
             status: true,
             message: `Data fetched for category: ${categoryName}`,
             data: components,
             total,
             currentPage: parseInt(page),
-            totalPages: Math.ceil(total / parseInt(limit))
+            totalPages: Math.ceil(total / parsedLimit)
         });
 
     } catch (err) {
-        // 6. Handle potential server errors
-        console.error("Error in getComponentsByCategory:", err); // Log the error for debugging
+        console.error("Error in getComponentsByCategory:", err);
         res.status(500).json({
             status: false,
             message: "Error fetching components by category",
