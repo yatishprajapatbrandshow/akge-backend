@@ -80,7 +80,7 @@ app.use("/api/upload", uploadRouter);
 app.use("/api/list-detail-page", newsDetailPageRouter);
 
 // dashboard api router 
-app.use("/api/dashboaedData", dashboardRouter)
+app.use("/api/dashboardData", dashboardRouter)
 
 // Start the server
 app.listen(PORT || 3000, () => {
