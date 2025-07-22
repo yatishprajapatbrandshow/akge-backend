@@ -289,7 +289,6 @@ const slugSchema = new mongoose.Schema({
     },
     stream: {
         type: String,
-        required: true
     },
     status: {
         type: Boolean,
