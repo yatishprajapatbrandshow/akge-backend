@@ -218,14 +218,20 @@ const update = async (req, res) => {
     }
     // Check if departments school id is the same as the school id
     if (schoolExists._id.toString() !== departmentExists.school.toString()) {
-      const schoolExists1 = await School.findOne({
-        _id: departmentExists.school,
-      });
-      schoolExists1.departments = schoolExists1.departments.filter(
-        (dep) => dep.toString() !== departmentExists._id.toString()
-      );
-      await schoolExists1.save();
+      const schoolExists1 = await School.findById(departmentExists.school);
+
+      if (schoolExists1) {
+        schoolExists1.departments = (schoolExists1.departments || []).filter(
+          (dep) => dep.toString() !== departmentExists._id.toString()
+        );
+        await schoolExists1.save();
+      } else {
+        console.error(`School with ID ${departmentExists.school} not found.`);
+        // Optional: throw an error or handle gracefully
+        // throw new Error("Referenced school not found for the department.");
+      }
     }
+
 
     // Update department
     const updated = await Departments.findOneAndUpdate(
@@ -242,7 +248,7 @@ const update = async (req, res) => {
     ).exec();
     // check unique
     if (!schoolExists.departments.includes(_id)) {
-      schoolExists.departments.push(_id);
+      schoolExists?.departments?.push(_id);
       await schoolExists.save();
     }
     if (updated) {

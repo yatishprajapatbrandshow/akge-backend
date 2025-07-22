@@ -14,12 +14,15 @@ const schoolSchema = new mongoose.Schema(
       required: true,
     },
     accreditation: String, // Accreditation information, if applicable
-    departments: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Department", // Reference to the Department model
-      },
-    ],
+    departments: {
+      type: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Department", // Reference to the Department model
+        },
+      ],
+      default: []
+    },
     status: {
       type: Boolean,
       default: true,
