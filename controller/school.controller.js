@@ -26,7 +26,7 @@ const create = async (req, res) => {
     }
 
     // Check for duplicate school
-    const schoolExists = await School.findOne({ schoolCode });
+    const schoolExists = await School.findOne({ schoolCode, status: true, deleteflag: false });
     if (schoolExists) {
       return res.status(400).json({
         status: false,
@@ -223,7 +223,7 @@ const search = async (req, res) => {
 
     // Build query conditionally based on the search parameter
     const query = search
-      ? { name: { $regex: search, $options: "i" } } // Case-insensitive name search
+      ? { name: { $regex: search, $options: "i" }, status: true, deleteflag: false } // Case-insensitive name search
       : {}; // No filtering, fetch all records
 
     // Fetch schools with pagination and populate departments
@@ -302,7 +302,7 @@ const deleteSchool = async (req, res) => {
       department.status = false;
       await department.save();
     });
-    
+
     const faculty = await Faculty.find({
       school: id,
       status: true,
