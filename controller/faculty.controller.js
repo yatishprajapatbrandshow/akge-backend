@@ -9,14 +9,8 @@ const create = async (req, res) => {
       email,
       designation,
       school,
-      department, // Array of department IDs
-      phoneNumber,
-      address,
-      dateOfBirth,
-      hireDate,
-      salary,
+      department, 
       subjectsTaught,
-      researchInterests,
       profilePicture,
       socialLinks,
     } = req.body;
@@ -25,7 +19,6 @@ const create = async (req, res) => {
     if (
       !firstName ||
       !email ||
-      !phoneNumber ||
       !subjectsTaught ||
       !designation ||
       !school ||
@@ -77,14 +70,8 @@ const create = async (req, res) => {
       email,
       designation,
       school,
-      department, // Store the array of department IDs
-      phoneNumber,
-      address,
-      dateOfBirth,
-      hireDate,
-      salary,
+      department,
       subjectsTaught,
-      researchInterests,
       profilePicture,
       socialLinks,
       status: true,
@@ -124,14 +111,8 @@ const update = async (req, res) => {
       email,
       school,
       designation,
-      departments, // Expecting an array of department IDs
-      phoneNumber,
-      address,
-      dateOfBirth,
-      hireDate,
-      salary,
+      departments, 
       subjectsTaught,
-      researchInterests,
       profilePicture,
       socialLinks,
     } = req.body;
@@ -219,14 +200,8 @@ const update = async (req, res) => {
         email,
         designation,
         school,
-        department: departments, // Save the updated departments array
-        phoneNumber,
-        address,
-        dateOfBirth,
-        hireDate,
-        salary,
+        department: departments,
         subjectsTaught,
-        researchInterests,
         profilePicture,
         socialLinks,
       },
@@ -359,14 +334,7 @@ const search = async (req, res) => {
         { lastName: { $regex: search, $options: "i" } },
         { email: { $regex: search, $options: "i" } },
         { designation: { $regex: search, $options: "i" } },
-        { phoneNumber: { $regex: search, $options: "i" } },
-        { address: { $regex: search, $options: "i" } },
-        { dateOfBirth: { $regex: search, $options: "i" } },
-        { hireDate: { $regex: search, $options: "i" } },
-        { salary: { $regex: search, $options: "i" } },
         { subjectsTaught: { $regex: search, $options: "i" } },
-        { researchInterests: { $regex: search, $options: "i" } },
-        { profilePicture: { $regex: search, $options: "i" } },
         { socialLinks: { $regex: search, $options: "i" } },
       ],
       deleteflag: false,
