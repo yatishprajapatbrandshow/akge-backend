@@ -9,15 +9,11 @@ const create = async (req, res) => {
       location,
       description,
       yearEstablished,
-      schoolType,
       accreditation,
-      contactNumber,
-      email,
-      schoolCode,
     } = req.body;
 
     // Validate required fields
-    if (!name || !yearEstablished || !schoolType || !schoolCode || !location) {
+    if (!name || !yearEstablished || !location) {
       return res.status(400).json({
         status: false,
         message: "Content can not be empty!",
@@ -26,7 +22,7 @@ const create = async (req, res) => {
     }
 
     // Check for duplicate school
-    const schoolExists = await School.findOne({ schoolCode, status: true, deleteflag: false });
+    const schoolExists = await School.findOne({ name, status: true, deleteflag: false });
     if (schoolExists) {
       return res.status(400).json({
         status: false,
@@ -41,11 +37,7 @@ const create = async (req, res) => {
       location,
       description,
       yearEstablished,
-      schoolType,
       accreditation,
-      contactNumber,
-      email,
-      schoolCode,
       status: true,
       deleteflg: false,
     });
@@ -128,11 +120,7 @@ const update = async (req, res) => {
       location,
       description,
       yearEstablished,
-      schoolType,
       accreditation,
-      contactNumber,
-      email,
-      schoolCode,
       departments,
     } = req.body;
 
@@ -146,7 +134,7 @@ const update = async (req, res) => {
 
     // Check for duplicate schoolCode
     const duplicateSchool = await School.findOne({
-      schoolCode,
+      name,
       _id: { $ne: _id },
     }).exec();
     if (duplicateSchool) {
@@ -166,11 +154,7 @@ const update = async (req, res) => {
           location,
           description,
           yearEstablished,
-          schoolType,
           accreditation,
-          contactNumber,
-          email,
-          schoolCode,
           departments,
         },
       },

@@ -7,7 +7,6 @@ const create = async (req, res) => {
       name,
       school,
       description,
-      departmentCode,
       // headOfDepartment,
       programsOffered,
     } = req.body;
@@ -15,7 +14,6 @@ const create = async (req, res) => {
     // Validate required fields
     const missings = [];
     if (!name) missings.push("name");
-    if (!departmentCode) missings.push("departmentCode");
     // if (!headOfDepartment) missings.push("headOfDepartment");
     if (!programsOffered) missings.push("programsOffered");
     if (!school) missings.push("school");
@@ -66,7 +64,7 @@ const create = async (req, res) => {
     // }
     // Check for duplicate department
     const departmentExists = await Departments.findOne({
-      departmentCode,
+      name,
     }).exec();
     if (departmentExists) {
       return res.status(400).json({
@@ -81,7 +79,6 @@ const create = async (req, res) => {
       name,
       school,
       description,
-      departmentCode,
       // headOfDepartment,
       programsOffered,
       status: true,
@@ -123,7 +120,6 @@ const update = async (req, res) => {
       name,
       school,
       description,
-      departmentCode,
       // headOfDepartment,
       programsOffered,
       faculty,
@@ -238,7 +234,6 @@ const update = async (req, res) => {
         name,
         school,
         description,
-        departmentCode,
         // headOfDepartment,
         programsOffered,
         faculty,
@@ -409,9 +404,6 @@ const getbySchool = async (req, res) => {
       });
     }
   } catch (error) {
-    console.log("====================================");
-    console.log(error);
-    console.log("====================================");
     // Return error response if something goes wrong
     return res.status(500).json({
       status: false,
@@ -462,7 +454,6 @@ const search = async (req, res) => {
     const departments = await Departments.find({
       $or: [
         { name: { $regex: search, $options: "i" } },
-        { departmentCode: { $regex: search, $options: "i" } },
         { description: { $regex: search, $options: "i" } },
       ],
       query,

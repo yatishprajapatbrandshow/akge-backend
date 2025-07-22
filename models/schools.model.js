@@ -13,19 +13,7 @@ const schoolSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    schoolType: {
-      type: String, // e.g., 'Public', 'Private', 'International'
-      enum: ["Public", "Private", "International"],
-      required: true,
-    },
     accreditation: String, // Accreditation information, if applicable
-    contactNumber: String,
-    email: String,
-    schoolCode: {
-      type: String,
-      required: true,
-      unique: true,
-    },
     departments: [
       {
         type: mongoose.Schema.Types.ObjectId,

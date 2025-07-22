@@ -11,10 +11,6 @@ const departmentSchema = new mongoose.Schema({
     required: true,
   },
   description: String,
-  departmentCode: {
-    type: String, // Unique department code, e.g., 'CS01'
-    required: true,
-  },
   // headOfDepartment: {
   //   type: mongoose.Schema.Types.ObjectId,
   //   ref: "Faculty", // Reference to the Faculty model (Head of Department)
