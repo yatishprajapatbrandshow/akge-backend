@@ -76,7 +76,7 @@ app.use("/api/edit-path", editPathRouter);
 app.use("/api/upload", uploadRouter);
 
 // News Detail Page Router
-app.use("/api/news-detail-page", newsDetailPageRouter);
+app.use("/api/list-detail-page", newsDetailPageRouter);
 
 // Start the server
 app.listen(PORT || 3000, () => {

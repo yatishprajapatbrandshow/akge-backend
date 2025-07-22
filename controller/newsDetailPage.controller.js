@@ -2,17 +2,24 @@ const { Slug } = require('../models');
 
 const getNewsDetailPages = async (req, res) => {
   try {
-    const { page = 1, limit = 10, search = "" } = req.query;
+    const { page = 1, limit = 10, search = "", type } = req.query;
     const pageNumber = parseInt(page);
     const pageLimit = parseInt(limit);
     const skip = (pageNumber - 1) * pageLimit;
 
     const filter = {
-      type: "News",
-      ComponentType: "news-details",
       status: true,
       deleteflag: false,
     };
+    if (type) {
+      filter.type = type
+    }
+
+    if (type == "News") {
+      filter.ComponentType = "news-details"
+    } else if (type == "Event") {
+      filter.ComponentType = "event-details"
+    }
 
     // Optional search on title or slug
     if (search.trim() !== "") {
