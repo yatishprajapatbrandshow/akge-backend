@@ -28,7 +28,8 @@ const {
   extraParamsDataRouter,
   editPathRouter,
   newsDetailPageRouter,
-  uploadRouter
+  uploadRouter,
+  dashboardRouter
 } = require("./routes");
 
 app.get('/health-check', (req, res) => {
@@ -77,6 +78,9 @@ app.use("/api/upload", uploadRouter);
 
 // News Detail Page Router
 app.use("/api/list-detail-page", newsDetailPageRouter);
+
+// dashboard api router 
+app.use("/api/dashboardData", dashboardRouter)
 
 // Start the server
 app.listen(PORT || 3000, () => {
