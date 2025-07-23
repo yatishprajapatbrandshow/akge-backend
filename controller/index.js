@@ -10,11 +10,12 @@ const announcementController = require("./announcement.controller");
 const highlightBannerController = require("./highlightBanner.controller");
 const componentsController = require('./components.controller')
 const extraParamsDataController = require('./extraParamsData.controller')
-const  editPathController = require('./EditPath.controller');
+const editPathController = require('./EditPath.controller');
 const newsDetailPageController = require('./newsDetailPage.controller');
 const dashboardController = require('./Dashboard.controller');
 
-const  uploadfileController = require('./upload.controller');
+const uploadfileController = require('./upload.controller');
+const widgetController = require('./widget.controller')
 module.exports = {
   adminController,
   slugController,
@@ -31,5 +32,6 @@ module.exports = {
   extraParamsDataController,
   newsDetailPageController,
   uploadfileController,
-  dashboardController
+  dashboardController,
+  widgetController
 };

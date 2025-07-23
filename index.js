@@ -22,7 +22,8 @@ const {
   editPathRouter,
   newsDetailPageRouter,
   uploadRouter,
-  dashboardRouter
+  dashboardRouter,
+  widgetRouter
 } = require("./routes");
 const { userAuth } = require("./middlewares/auth");
 
@@ -87,6 +88,9 @@ app.use("/api/list-detail-page", userAuth, newsDetailPageRouter);
 
 // dashboard api router 
 app.use("/api/dashboardData", userAuth, dashboardRouter)
+
+// dashboard api router 
+app.use("/api/widget", widgetRouter)
 
 // Start the server
 app.listen(PORT || 3000, () => {

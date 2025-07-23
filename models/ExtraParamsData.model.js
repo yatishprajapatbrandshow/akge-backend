@@ -10,6 +10,7 @@ const ParamSchema = new mongoose.Schema({
     orderSequence: { type: Number, default: 0 },
     type: { type: String, required: true }, // Multiple values allowed
     holder: { type: String, required: true },
+    widgetType: { type: String, },
     status: { type: Boolean, default: true },
     addedon: { type: Date, default: Date.now },
     addedby: { type: String },
