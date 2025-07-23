@@ -288,7 +288,8 @@ const slugSchema = new mongoose.Schema({
         required: false
     },
     stream: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'School', // Name of the referenced model
     },
     status: {
         type: Boolean,
@@ -316,6 +317,6 @@ const slugSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model('Slug', slugSchema);

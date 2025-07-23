@@ -562,7 +562,7 @@ const getBySlug = async (req, res) => {
       path = '/' + path;
     }
 
-    const data = await Slug.findOne({ path, deleteflag: false, status: true }).lean();
+    const data = await Slug.findOne({ path, deleteflag: false, status: true }).lean().populate('stream');
     if (!data) {
       return res.status(404).json({
         status: false,
@@ -579,7 +579,7 @@ const getBySlug = async (req, res) => {
       status: true,
       deleteflag: false
     })
-      .select('param paramDesc paramImg paramUrl orderSequence holder calid')
+      .select('param paramDesc paramImg paramUrl orderSequence holder calid type')
       .lean();
 
     // Normalize and transform array to object

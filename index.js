@@ -29,7 +29,8 @@ const {
   editPathRouter,
   newsDetailPageRouter,
   uploadRouter,
-  dashboardRouter
+  dashboardRouter,
+  widgetRouter
 } = require("./routes");
 
 app.get('/health-check', (req, res) => {
@@ -81,6 +82,9 @@ app.use("/api/list-detail-page", newsDetailPageRouter);
 
 // dashboard api router 
 app.use("/api/dashboardData", dashboardRouter)
+
+// dashboard api router 
+app.use("/api/widget", widgetRouter)
 
 // Start the server
 app.listen(PORT || 3000, () => {

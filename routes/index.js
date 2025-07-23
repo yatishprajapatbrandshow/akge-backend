@@ -13,7 +13,8 @@ const extraParamsDataRouter = require('./extraParamsData.router')
 const editPathRouter = require("./EditPath.router");
 const newsDetailPageRouter = require("./newsDetailPage.router");
 const uploadRouter = require("./upload.router");
-const dashboardRouter = require("./Dashboard.router")
+const dashboardRouter = require("./Dashboard.router");
+const widgetRouter = require('./widget.router')
 module.exports = {
   adminRouter,
   slugRouter,
@@ -29,6 +30,7 @@ module.exports = {
   componentRouter,
   extraParamsDataRouter,
   newsDetailPageRouter,
-  uploadRouter ,
-  dashboardRouter
+  uploadRouter,
+  dashboardRouter,
+  widgetRouter
 };
