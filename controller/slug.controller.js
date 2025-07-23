@@ -579,7 +579,7 @@ const getBySlug = async (req, res) => {
       status: true,
       deleteflag: false
     })
-      .select('param paramDesc paramImg paramUrl orderSequence holder calid type')
+      .select('param paramDesc paramImg paramUrl orderSequence holder calid type widgetType')
       .lean();
 
     // Normalize and transform array to object

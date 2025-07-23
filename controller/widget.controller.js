@@ -33,7 +33,7 @@ const getWidgetData = async (req, res) => {
 
         // Paginated result
         const results = await Slug.find(query)
-            .select('name shortdesc description banner_img path page_id type date widgetType')
+            .select('name shortdesc description banner_img path page_id type date')
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(parsedLimit);
