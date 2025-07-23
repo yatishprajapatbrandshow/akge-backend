@@ -32,9 +32,12 @@ connectDB();
 
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: (origin, callback) => {
+    callback(null, origin); // Reflect the request origin
+  },
   credentials: true
-})); // To parse JSON request bodies
+}));
+
 app.use(express.json()); // To parse JSON request bodies
 app.use(cookieParser());
 
