@@ -1,11 +1,11 @@
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 const fs = require("fs");
 // DigitalOcean Spaces configuration
-const bucket = "aapkikismat";
-const region = "blr1";
-const endpoint = "https://aapkikismat.blr1.digitaloceanspaces.com";
-const accessKeyId = "DO009PULTXKXT98JUQ3X"; // Replace with your actual access key
-const secretAccessKey = "D9OAnjnf4YN51rvJFwpB/2KSbqPMEj0CNaRXI046fhg";
+const bucket = 'csip-image';
+const region = 'blr1';
+const endpoint = 'https://csip-image.blr1.digitaloceanspaces.com';
+const accessKeyId = 'DO00GDP78XUCFGCYBR3P';
+const secretAccessKey = 'zL0CvU2FTCmiejqW5+9BN/WZQP0B3J6Eu6PXZUYS1ew';
 
 // Create an S3 client
 const s3Client = new S3Client({
@@ -21,7 +21,6 @@ const s3Client = new S3Client({
 const uploadfile = async (req, res) => {
   try {
     const files = req.files; // Access multiple files
-    const folderName = req.body?.folderName || "";
 
     if (!files || files.length === 0) {
       return res.status(400).json({
@@ -39,7 +38,7 @@ const uploadfile = async (req, res) => {
       const fileMimeType = file.mimetype;
 
       // Prepare S3 upload parameters
-      const key = `${folderName}/${fileName}`;
+      const key = `${fileName}`;
       const fileBuffer = fs.readFileSync(filePath); // Read file as a buffer
 
       const uploadParams = {
@@ -53,7 +52,7 @@ const uploadfile = async (req, res) => {
       // Upload file to DigitalOcean Spaces
       const result = await s3Client.send(new PutObjectCommand(uploadParams));
 
-      const fileUrl = `https://content.vinaybajrangi.com/aapkikismat/${key}`;
+      const fileUrl = `https://csip-image.blr1.digitaloceanspaces.com/${key}`;
       const finalUrl = fileUrl.replace(/([^:]\/)\/+/g, "$1"); // Clean URL
 
       // Add the file URL to the response array
