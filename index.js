@@ -1,17 +1,10 @@
 const express = require("express");
 const connectDB = require("./db");
+const cookieParser = require("cookie-parser");
 require("dotenv").config();
 const cors = require("cors");
 const app = express();
 const PORT = process.env.PORT || 5000;
-
-// Connect to the database
-connectDB();
-
-// Middleware
-app.use(cors()); // To parse JSON request bodies
-app.use(express.json()); // To parse JSON request bodies
-
 // Import Routers
 const {
   adminRouter,
@@ -21,7 +14,7 @@ const {
   departmentRouter,
   facultyRouter,
   staticPageRouter,
-  circulerRouter,
+  circularRouter,
   announcementRouter,
   highlightBannerRouter,
   componentRouter,
@@ -32,6 +25,27 @@ const {
   dashboardRouter,
   widgetRouter
 } = require("./routes");
+const { userAuth } = require("./middlewares/auth");
+
+// Connect to the database
+connectDB();
+
+const allowedOrigins = ["http://localhost:3000", "https://new-akg.vercel.app"];
+// Middleware
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true
+}));
+
+app.use(express.json()); // To parse JSON request bodies
+app.use(cookieParser());
+
 
 app.get('/health-check', (req, res) => {
   res.status(200).send("Everything Is Fine " + Date.now())
@@ -44,44 +58,44 @@ app.use("/api/auth", adminRouter);
 app.use("/api/slug", slugRouter);
 
 // meta Router
-app.use("/api/meta", metaRouter);
+app.use("/api/meta", userAuth, metaRouter);
 
-//Circuler Router
-app.use("/api/circuler", circulerRouter);
+//Circular Router
+app.use("/api/circular", userAuth, circularRouter);
 
 // school Router
-app.use("/api/school", schoolRouter);
+app.use("/api/school", userAuth, schoolRouter);
 
 // department Router
-app.use("/api/department", departmentRouter);
+app.use("/api/department", userAuth, departmentRouter);
 
 // faculty Router
-app.use("/api/faculty", facultyRouter);
+app.use("/api/faculty", userAuth, facultyRouter);
 
 // static-page page
-app.use("/api/static-page", staticPageRouter);
+app.use("/api/static-page", userAuth, staticPageRouter);
 
 // static-page page
-app.use("/api/announcement", announcementRouter);
+app.use("/api/announcement", userAuth, announcementRouter);
 
 // static-page page
-app.use("/api/highlight-banner", highlightBannerRouter);
+app.use("/api/highlight-banner", userAuth, highlightBannerRouter);
 
 // static-page page
-app.use("/api/components", componentRouter);
+app.use("/api/components", userAuth, componentRouter);
 
 // static-page page
-app.use("/api/extra-component-data", extraParamsDataRouter);
+app.use("/api/extra-component-data", userAuth, extraParamsDataRouter);
 // Edit Path Router
-app.use("/api/edit-path", editPathRouter);
+app.use("/api/edit-path", userAuth, editPathRouter);
 // Edit Path Router
-app.use("/api/upload", uploadRouter);
+app.use("/api/upload", userAuth, uploadRouter);
 
 // News Detail Page Router
-app.use("/api/list-detail-page", newsDetailPageRouter);
+app.use("/api/list-detail-page", userAuth, newsDetailPageRouter);
 
 // dashboard api router 
-app.use("/api/dashboardData", dashboardRouter)
+app.use("/api/dashboardData", userAuth, dashboardRouter)
 
 // dashboard api router 
 app.use("/api/widget", widgetRouter)

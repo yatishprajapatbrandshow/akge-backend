@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const circulerSchema = new mongoose.Schema(
+const circularSchema = new mongoose.Schema(
   {
     sid: {
       type: Number,
@@ -38,7 +38,7 @@ const circulerSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["circuler", "article", "news", "event"],
+      enum: ["circular", "article", "news", "event"],
     },
     tags: {
       type: [String],
@@ -57,4 +57,4 @@ const circulerSchema = new mongoose.Schema(
   { timestamps: true, timeseries: true }
 );
 
-module.exports = mongoose.model("circuler", circulerSchema);
+module.exports = mongoose.model("circular", circularSchema);

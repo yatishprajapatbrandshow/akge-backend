@@ -1,7 +1,7 @@
-const { Circuler } = require("../models");
+const { Circular } = require("../models");
 const generateUniqueId = require("../utils/generateSid");
 
-const addCirculer = async (req, res) => {
+const addCircular = async (req, res) => {
   try {
     const {
       title,
@@ -32,7 +32,7 @@ const addCirculer = async (req, res) => {
     if (!relatedLinks) missingFields.push("Related Links");
     if (!pdf) missingFields.push("PDF");
 
-    const typeArray = ["circuler"];
+    const typeArray = ["circular"];
     const featuredArray = ["Yes", "No"];
 
     if (type && !typeArray.includes(type)) {
@@ -62,7 +62,7 @@ const addCirculer = async (req, res) => {
     }
 
     // Check if a news/event with the same pageUrl already exists
-    const existingNews = await Circuler.findOne({
+    const existingNews = await Circular.findOne({
       type,
       title,
       status: true,
@@ -70,18 +70,18 @@ const addCirculer = async (req, res) => {
     if (existingNews) {
       return res.status(400).json({
         status: false,
-        message: "Circuler with this type and title already exists",
+        message: "Circular with this type and title already exists",
         data: false,
       });
     }
 
     // Generate a unique sid
-    const existingsids = await Circuler.find({}, "sid");
+    const existingsids = await Circular.find({}, "sid");
     const existingIds = existingsids.map((activityMap) => activityMap.sid);
     const newSid = await generateUniqueId(existingIds);
 
-    // Create a new Circuler entry
-    const circuler = new Circuler({
+    // Create a new Circular entry
+    const circular = new Circular({
       sid: newSid,
       title,
       shortDesc,
@@ -97,18 +97,18 @@ const addCirculer = async (req, res) => {
       pdf,
     });
 
-    const savedNews = await circuler.save();
+    const savedNews = await circular.save();
     if (!savedNews) {
       return res.status(500).json({
         status: false,
-        message: "Failed to add Circuler",
+        message: "Failed to add Circular",
         data: false,
       });
     }
     return res.status(200).json({
       status: true,
-      message: "Circuler added successfully",
-      data: circuler,
+      message: "Circular added successfully",
+      data: circular,
     });
   } catch (error) {
     console.log(error);
@@ -119,7 +119,7 @@ const addCirculer = async (req, res) => {
     });
   }
 };
-const updateCirculer = async (req, res) => {
+const updateCircular = async (req, res) => {
   try {
     const {
       sid,
@@ -144,7 +144,7 @@ const updateCirculer = async (req, res) => {
         data: false,
       });
     }
-    const typeArray = ["circuler"];
+    const typeArray = ["circular"];
     const featuredArray = ["Yes", "No"];
     if (type && !typeArray.includes(type)) {
       return res.status(400).json({
@@ -163,12 +163,12 @@ const updateCirculer = async (req, res) => {
     }
 
     // Find existing news/event by sid
-    const existingNews = await Circuler.findOne({ sid });
+    const existingNews = await Circular.findOne({ sid });
 
     if (!existingNews) {
       return res.status(404).json({
         status: false,
-        message: "Circuler not found with the given SID",
+        message: "Circular not found with the given SID",
         data: false,
       });
     }
@@ -192,7 +192,7 @@ const updateCirculer = async (req, res) => {
 
     return res.status(200).json({
       status: true,
-      message: "Circuler updated successfully",
+      message: "Circular updated successfully",
       data: savedNews,
     });
   } catch (error) {
@@ -204,7 +204,7 @@ const updateCirculer = async (req, res) => {
     });
   }
 };
-const getAllCirculer = async (req, res) => {
+const getAllCircular = async (req, res) => {
   try {
     const { type } = req.query;
 
@@ -215,19 +215,19 @@ const getAllCirculer = async (req, res) => {
     }
 
     // Fetch all news/events with the optional type filter
-    const newsEvents = await Circuler.find(query);
+    const newsEvents = await Circular.find(query);
 
     if (!newsEvents.length) {
       return res.status(404).json({
         status: false,
-        message: "No Circulers found",
+        message: "No Circulars found",
         data: false,
       });
     }
 
     return res.status(200).json({
       status: true,
-      message: "All Circulers found",
+      message: "All Circulars found",
       data: newsEvents,
     });
   } catch (error) {
@@ -239,7 +239,7 @@ const getAllCirculer = async (req, res) => {
     });
   }
 };
-const getCirculer = async (req, res) => {
+const getCircular = async (req, res) => {
   try {
     const { sid, type } = req.query; // Assuming you're passing the sid and type in the URL params
 
@@ -260,19 +260,19 @@ const getCirculer = async (req, res) => {
     }
 
     // Find the news/event entry based on the query
-    const newsEvent = await Circuler.findOne(query);
+    const newsEvent = await Circular.findOne(query);
 
     if (!newsEvent) {
       return res.status(404).json({
         status: false,
-        message: "Circuler not found",
+        message: "Circular not found",
         data: false,
       });
     }
 
     return res.status(200).json({
       status: true,
-      message: "Circuler found",
+      message: "Circular found",
       data: newsEvent,
     });
   } catch (error) {
@@ -284,7 +284,7 @@ const getCirculer = async (req, res) => {
     });
   }
 };
-const searchCirculer = async (req, res) => {
+const searchCircular = async (req, res) => {
   try {
     const { title } = req.query;
 
@@ -295,7 +295,7 @@ const searchCirculer = async (req, res) => {
       query.title = { $regex: title, $options: "i" }; // Case-insensitive search
     }
     // // Type validation and filter
-    // const validTypes = ["circuler"]; // Define valid types
+    // const validTypes = ["circular"]; // Define valid types
     // if (type) {
     //   if (!validTypes.includes(type)) {
     //     return res.status(400).json({
@@ -307,15 +307,15 @@ const searchCirculer = async (req, res) => {
     //   query.type = type; // Add the type filter to the query
     // }
 
-    // Fetch Circulers based on the query (title search or latest 10 events)
-    const Circuler = await Circuler.find(query)
+    // Fetch Circulars based on the query (title search or latest 10 events)
+    const Circular = await Circular.find(query)
       .sort({ date: -1 }) // Sort by date in descending order to get the latest ones
       .limit(10); // Limit to 10 results
 
     return res.status(200).json({
       status: true,
-      message: Circuler.length ? "Circulers found" : "No Circulers found",
-      data: Circuler,
+      message: Circular.length ? "Circulars found" : "No Circulars found",
+      data: Circular,
     });
   } catch (error) {
     console.log(error);
@@ -328,9 +328,9 @@ const searchCirculer = async (req, res) => {
 };
 
 module.exports = {
-  addCirculer,
-  updateCirculer,
-  getAllCirculer,
-  getCirculer,
-  searchCirculer,
+  addCircular,
+  updateCircular,
+  getAllCircular,
+  getCircular,
+  searchCircular,
 };
