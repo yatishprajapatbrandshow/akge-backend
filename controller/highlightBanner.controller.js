@@ -5,13 +5,13 @@ const { HighlightBanner, Slug } = require("../models");
  */
 const addHighlightBanner = async (req, res) => {
   try {
-    const { pageid, banner, description, link } = req.body;
+    const { pageid, banner, description, link, size, title } = req.body;
 
     // Validate required fields
-    if (!pageid || !banner || !description || !link) {
+    if (!pageid || !banner || !description || !link || !title || !size) {
       return res.status(400).json({
         status: false,
-        message: "All fields are required: pageid, banner, description, link.",
+        message: "All fields are required: pageid, banner, description, link, title, size.",
         data: false,
       });
     }
@@ -38,6 +38,8 @@ const addHighlightBanner = async (req, res) => {
       description,
       link,
       order: checkBanner ? checkBanner.order + 1 : 1,
+      size,
+      title
     });
     await newBanner.save();
 
@@ -59,7 +61,7 @@ const addHighlightBanner = async (req, res) => {
  */
 const updateHighlightBanner = async (req, res) => {
   try {
-    const { _id, pageid, banner, description, link, status } = req.body;
+    const { _id, pageid, banner, description, link, status, size,title } = req.body;
 
     // Validate required fields
     if (!_id) {
@@ -88,7 +90,7 @@ const updateHighlightBanner = async (req, res) => {
     // Find and update banner
     const updatedBanner = await HighlightBanner.findByIdAndUpdate(
       _id,
-      { pageid, banner, description, link, status },
+      { pageid, banner, description, link, status, size,title },
       { new: true, runValidators: true }
     );
 
@@ -180,28 +182,63 @@ const getHighlightBannerById = async (req, res) => {
  */
 const getHighlightBannerList = async (req, res) => {
   try {
-    const banners = await HighlightBanner.find({
-      status: true,
-      deleteflag: false,
-    });
+    const {
+      page = 1,
+      limit = 10,
+      sortBy = "order",
+      sortOrder = "asc",
+      status,
+      pageid,
+    } = req.query;
 
-    if (!banners.length) {
-      return res.status(404).json({
-        status: false,
-        message: "No highlight banners found.",
-        data: false,
-      });
+    const query = {
+      deleteflag: false,
+    };
+
+    if (status !== undefined && status !== "") {
+      query.status = status === "true";
     }
+
+    if (pageid !== undefined && pageid !== "") {
+      query.pageid = parseInt(pageid);
+    }
+
+    const sortOptions = {};
+    sortOptions[sortBy] = sortOrder === "desc" ? -1 : 1;
+
+    const currentPage = parseInt(page);
+    const itemsPerPage = parseInt(limit);
+
+    const totalItems = await HighlightBanner.countDocuments(query);
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+    const banners = await HighlightBanner.find(query)
+      .sort(sortOptions)
+      .skip((currentPage - 1) * itemsPerPage)
+      .limit(itemsPerPage);
 
     return res.status(200).json({
       status: true,
       message: "Highlight banners fetched successfully.",
-      data: banners,
+      data: {
+        banners,
+        pagination: {
+          currentPage,
+          totalPages,
+          totalItems,
+          itemsPerPage,
+          hasPrevPage: currentPage > 1,
+          hasNextPage: currentPage < totalPages,
+        },
+      },
     });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ status: false, message: error.message, data: false });
+    console.error("Error in getHighlightBannerList:", error);
+    return res.status(500).json({
+      status: false,
+      message: "Internal server error",
+      data: false,
+    });
   }
 };
 /**

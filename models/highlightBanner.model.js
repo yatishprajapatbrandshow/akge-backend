@@ -10,6 +10,10 @@ const highlightBannerSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    title: {
+      type: String,
+      required: true,
+    },
     description: {
       type: String,
       required: true,
@@ -21,6 +25,10 @@ const highlightBannerSchema = new mongoose.Schema(
     order: {
       type: Number,
       required: true,
+    },
+    size: {
+      type: String,
+      required: true
     },
     status: {
       type: Boolean,
