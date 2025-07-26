@@ -22,6 +22,10 @@ const highlightBannerSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    size: {
+      type: String,
+      required: true
+    },
     status: {
       type: Boolean,
       default: true,

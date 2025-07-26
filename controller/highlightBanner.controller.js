@@ -5,7 +5,7 @@ const { HighlightBanner, Slug } = require("../models");
  */
 const addHighlightBanner = async (req, res) => {
   try {
-    const { pageid, banner, description, link } = req.body;
+    const { pageid, banner, description, link, size } = req.body;
 
     // Validate required fields
     if (!pageid || !banner || !description || !link) {
@@ -38,6 +38,7 @@ const addHighlightBanner = async (req, res) => {
       description,
       link,
       order: checkBanner ? checkBanner.order + 1 : 1,
+      size
     });
     await newBanner.save();
 
@@ -59,7 +60,7 @@ const addHighlightBanner = async (req, res) => {
  */
 const updateHighlightBanner = async (req, res) => {
   try {
-    const { _id, pageid, banner, description, link, status } = req.body;
+    const { _id, pageid, banner, description, link, status,size } = req.body;
 
     // Validate required fields
     if (!_id) {
@@ -88,7 +89,7 @@ const updateHighlightBanner = async (req, res) => {
     // Find and update banner
     const updatedBanner = await HighlightBanner.findByIdAndUpdate(
       _id,
-      { pageid, banner, description, link, status },
+      { pageid, banner, description, link, status,size },
       { new: true, runValidators: true }
     );
 
