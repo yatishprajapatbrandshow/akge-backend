@@ -30,10 +30,15 @@ const { userAuth } = require("./middlewares/auth");
 // Connect to the database
 connectDB();
 
-app.use(cors({
-  origin: true, // Allow all origins
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow all origins but still enable credentials
+      callback(null, origin);
+    },
+    credentials: true,
+  })
+);
 
 app.use(express.json()); // To parse JSON request bodies
 app.use(cookieParser());
