@@ -38,6 +38,9 @@ const slugSchema = new mongoose.Schema({
         type: String,
         required: false
     },
+    downloadCenterPdf: {
+        type: String,
+    },
     param1: {
         type: String,
         required: false
