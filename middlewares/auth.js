@@ -5,23 +5,32 @@ const { Admin } = require('../models');
 const userAuth = async (req, res, next) => {
     try {
         const { token } = req.cookies;
-        
+
         if (!token) {
-            return res.status(401).json({ message: "Please try to again login" });
+            return res.status(401).json({ message: "Unauthorized: No token provided" });
         }
-        const { _id } = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await Admin.findById(_id);
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await Admin.findById(decoded._id);
 
         if (!user) {
-            throw new Error("User not exist");
+            return res.status(404).json({ message: "User not found" });
         }
 
         req.user = user;
         next();
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        if (error.name === "JsonWebTokenError") {
+            return res.status(401).json({ message: "Invalid token" });
+        }
+
+        if (error.name === "TokenExpiredError") {
+            return res.status(401).json({ message: "Token expired" });
+        }
+
+        return res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
-}
+};
 
 module.exports = {
     userAuth
