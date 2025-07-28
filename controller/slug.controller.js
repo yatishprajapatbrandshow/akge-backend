@@ -1,4 +1,4 @@
-const { Slug, ExtraParamsData } = require("../models");
+const { Slug, ExtraParamsData, HighlightBanner } = require("../models");
 const bcrypt = require("bcryptjs");
 // const jwt = require('jsonwebtoken');
 const generateUniqueId = async (existingIds) => {
@@ -588,16 +588,17 @@ const getBySlug = async (req, res) => {
       if (!acc[normalizedKey]) {
         acc[normalizedKey] = {};
       }
-      acc[normalizedKey]=item;
+      acc[normalizedKey] = item;
       return acc;
     }, {});
 
-
+    const highlightBanner = await HighlightBanner.find({ pageid: data?.page_id, status: true, deleteflag: false })
 
     const finalData = {
       ...data,
       extraComponentData: formattedExtraParams || false,
       breadCrumb: breadcrumb || false,
+      highlightBanner: highlightBanner || false
     };
 
     return res.status(200).json({
