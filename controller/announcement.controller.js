@@ -81,6 +81,15 @@ const updateAnnouncement = async (req, res) => {
 
 const getAllAnnouncements = async (req, res) => {
   try {
+    const { stream } = req.query;
+    const query = {}
+    if (stream) {
+      const checkValidStream = await School.findOne({ _id: stream });
+      if (checkValidStream) {
+        query.stream = stream;
+        query.status = true;
+      }
+    }
     const announcements = await Announcements.find().populate('stream').sort({ createdAt: -1 });
     return res.status(200).json({
       status: true,
