@@ -1,5 +1,6 @@
 const { Slug, ExtraParamsData, HighlightBanner } = require("../models");
 const bcrypt = require("bcryptjs");
+const imagePath = "https://csip-image.blr1.digitaloceanspaces.com/csip-image"
 // const jwt = require('jsonwebtoken');
 const generateUniqueId = async (existingIds) => {
   let id;
@@ -600,7 +601,8 @@ const getBySlug = async (req, res) => {
       ...data,
       extraComponentData: formattedExtraParams || false,
       breadCrumb: breadcrumb || false,
-      highlightBanner: highlightBanner || false
+      highlightBanner: highlightBanner || false,
+      banner_img: imagePath + data?.banner_img
     };
 
     return res.status(200).json({
