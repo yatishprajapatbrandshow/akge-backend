@@ -106,7 +106,8 @@ const update = async (req, res) => {
       editedby = "Admin",
       ComponentType,
       stream,
-      mainReportImage
+      mainReportImage,
+      downloadCenterPdf
     } = req.body;
 
     // Validate required fields
@@ -246,7 +247,8 @@ const update = async (req, res) => {
         deleteflag,
         ComponentType,
         stream,
-        mainReportImage
+        mainReportImage,
+        downloadCenterPdf
       },
       { new: true } // Return the updated document
     );
