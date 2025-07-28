@@ -20,6 +20,9 @@ const getNewsDetailPages = async (req, res) => {
     } else if (type == "Event") {
       filter.ComponentType = "event-details"
     }
+    else if (type == "Circular") {
+      filter.ComponentType = "circular-details"
+    }
 
     // Optional search on title or slug
     if (search.trim() !== "") {
