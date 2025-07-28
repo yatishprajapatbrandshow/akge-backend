@@ -5,10 +5,10 @@ const { HighlightBanner, Slug } = require("../models");
  */
 const addHighlightBanner = async (req, res) => {
   try {
-    const { pageid, banner, description, link, size, title,stream } = req.body;
+    const { pageid, banner, description, link, size, title, stream } = req.body;
 
     // Validate required fields
-    if (!pageid || !banner || !description || !link || !title || !size ||!stream) {
+    if (!pageid || !banner || !description || !link || !title || !size || !stream) {
       return res.status(400).json({
         status: false,
         message: "All fields are required: pageid, banner, description, link, title, size, stream.",
@@ -62,7 +62,7 @@ const addHighlightBanner = async (req, res) => {
  */
 const updateHighlightBanner = async (req, res) => {
   try {
-    const { _id, pageid, banner, description, link, status, size,title,stream } = req.body;
+    const { _id, pageid, banner, description, link, status, size, title, stream } = req.body;
 
     // Validate required fields
     if (!_id) {
@@ -91,7 +91,7 @@ const updateHighlightBanner = async (req, res) => {
     // Find and update banner
     const updatedBanner = await HighlightBanner.findByIdAndUpdate(
       _id,
-      { pageid, banner, description, link, status, size,title,stream },
+      { pageid, banner, description, link, status, size, title, stream },
       { new: true, runValidators: true }
     );
 
@@ -157,7 +157,7 @@ const getHighlightBannerById = async (req, res) => {
     const banner = await HighlightBanner.findById(_id).where({
       deleteflag: false,
       status: true,
-    });
+    }).populate('stream');
 
     if (!banner) {
       return res.status(404).json({
@@ -214,6 +214,7 @@ const getHighlightBannerList = async (req, res) => {
     const totalPages = Math.ceil(totalItems / itemsPerPage);
 
     const banners = await HighlightBanner.find(query)
+      .populate('stream')
       .sort(sortOptions)
       .skip((currentPage - 1) * itemsPerPage)
       .limit(itemsPerPage);
@@ -249,7 +250,7 @@ const getHighlightBannerByPageId = async (req, res) => {
   try {
     const { pageid } = req.params;
 
-    const banners = await HighlightBanner.find({ pageid, deleteflag: false });
+    const banners = await HighlightBanner.find({ pageid, deleteflag: false }).populate('stream');
 
     if (!banners.length) {
       return res.status(404).json({
