@@ -1,5 +1,6 @@
-const { Slug, ExtraParamsData } = require("../models");
+const { Slug, ExtraParamsData, HighlightBanner } = require("../models");
 const bcrypt = require("bcryptjs");
+const imagePath = "https://csip-image.blr1.digitaloceanspaces.com/csip-image"
 // const jwt = require('jsonwebtoken');
 const generateUniqueId = async (existingIds) => {
   let id;
@@ -104,7 +105,8 @@ const update = async (req, res) => {
       deleteflag = false,
       editedby = "Admin",
       ComponentType,
-      stream
+      stream,
+      mainReportImage
     } = req.body;
 
     // Validate required fields
@@ -243,7 +245,8 @@ const update = async (req, res) => {
         editedby,
         deleteflag,
         ComponentType,
-        stream
+        stream,
+        mainReportImage
       },
       { new: true } // Return the updated document
     );
@@ -588,16 +591,18 @@ const getBySlug = async (req, res) => {
       if (!acc[normalizedKey]) {
         acc[normalizedKey] = {};
       }
-      acc[normalizedKey]=item;
+      acc[normalizedKey] = item;
       return acc;
     }, {});
 
-
+    const highlightBanner = await HighlightBanner.find({ pageid: data?.page_id, status: true, deleteflag: false })
 
     const finalData = {
       ...data,
       extraComponentData: formattedExtraParams || false,
       breadCrumb: breadcrumb || false,
+      highlightBanner: highlightBanner || false,
+      banner_img: imagePath + data?.banner_img
     };
 
     return res.status(200).json({

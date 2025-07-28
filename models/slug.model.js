@@ -246,6 +246,9 @@ const slugSchema = new mongoose.Schema({
         type: String,
         required: false
     },
+    mainReportImage: {
+        type: String,
+    },
     video_url: {
         type: String,
         required: false
