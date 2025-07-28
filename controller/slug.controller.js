@@ -104,7 +104,8 @@ const update = async (req, res) => {
       deleteflag = false,
       editedby = "Admin",
       ComponentType,
-      stream
+      stream,
+      mainReportImage
     } = req.body;
 
     // Validate required fields
@@ -243,7 +244,8 @@ const update = async (req, res) => {
         editedby,
         deleteflag,
         ComponentType,
-        stream
+        stream,
+        mainReportImage
       },
       { new: true } // Return the updated document
     );
