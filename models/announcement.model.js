@@ -2,46 +2,26 @@ const mongoose = require("mongoose");
 
 const announcementSchema = new mongoose.Schema(
   {
-    sid: {
-      type: Number,
-      required: true,
-    },
     title: {
       type: String,
       required: true,
+      trim: true,
     },
-    shortDesc: {
+    link: {
       type: String,
       required: true,
+      trim: true,
     },
-    description: {
-      type: String,
-      required: true,
-    },
-    startdate: {
-      type: String,
-      required: true,
-    },
-    enddate: {
-      type: String,
-      required: true,
-    },
-    type: {
-      type: String,
-      enum: ["announcement"],
-    },
-    relatedLinks: {
-      type: [{}],
-    },
-    pdf: {
-      type: String,
+    stream: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'School', // Name of the referenced model
     },
     status: {
       type: Boolean,
       default: true,
     },
   },
-  { timestamps: true, timeseries: true }
+  { timestamps: true }
 );
 
-module.exports = mongoose.model("announcement", announcementSchema);
+module.exports = mongoose.model("Announcement", announcementSchema);

@@ -1,40 +1,22 @@
 const { Announcements } = require("../models");
 
-const generateUniqueId = async (existingIds) => {
-  let id;
-  const existingIdsSet = new Set(existingIds); // Use Set for faster lookups
-  do {
-    id = Math.floor(Math.random() * 1000000); // Adjust range if needed
-  } while (existingIdsSet.has(id));
-  return id;
-};
 const addAnnouncement = async (req, res) => {
   try {
-    const {
-      title,
-      shortDesc,
-      description,
-      startdate,
-      enddate,
-      type,
-      relatedLinks,
-      pdf,
-    } = req.body;
+    const { title, link, status, stream } = req.body;
 
-    const announcements = await Announcements.find().select("sid");
-    const ids = announcements.map((announcement) => announcement.sid);
-    const sid = await generateUniqueId(ids);
-    // Create a new announcement document
+    if (!title || !link) {
+      return res.status(400).json({
+        status: false,
+        message: "Title and link are required",
+        data: false,
+      });
+    }
+
     const newAnnouncement = new Announcements({
-      sid,
       title,
-      shortDesc,
-      description,
-      startdate,
-      enddate,
-      type: type || "announcement", // Default type
-      relatedLinks,
-      pdf,
+      link,
+      status: status !== undefined ? status : true,
+      stream: stream || null, // Optional stream
     });
 
     await newAnnouncement.save();
@@ -53,29 +35,20 @@ const addAnnouncement = async (req, res) => {
     });
   }
 };
+
 const updateAnnouncement = async (req, res) => {
   try {
-    const {
-      sid,
-      title,
-      shortDesc,
-      description,
-      startdate,
-      enddate,
-      type,
-      relatedLinks,
-      pdf,
-      status
-    } = req.body;
+    const { _id, title, link, status, stream } = req.body;
 
-    if (!sid) {
+    if (!_id) {
       return res.status(400).json({
         status: false,
-        message: "Announcement sid is required",
+        message: "Announcement _id is required",
         data: false,
       });
     }
-    const existing = await Announcements.findOne({ sid });
+
+    const existing = await Announcements.findById(_id);
     if (!existing) {
       return res.status(404).json({
         status: false,
@@ -84,26 +57,12 @@ const updateAnnouncement = async (req, res) => {
       });
     }
 
-    if (title) existing.title = title || existing.title;
-    if (shortDesc) existing.shortDesc = shortDesc || existing.shortDesc;
-    if (description) existing.description = description || existing.description;
-    if (startdate) existing.startdate = startdate || existing.startdate;
-    if (enddate) existing.enddate = enddate || existing.enddate;
-    if (type) existing.type = type || existing.type;
-    if (relatedLinks)
-      existing.relatedLinks = relatedLinks || existing.relatedLinks;
-    if (pdf) existing.pdf = pdf || existing.pdf;
-    if (status !== undefined) existing.status = status || existing.status;
+    if (title) existing.title = title;
+    if (link) existing.link = link;
+    if (status !== undefined) existing.status = status;
+    if (stream !== undefined) existing.stream = stream;
 
     const updatedAnnouncement = await existing.save();
-
-    if (!updatedAnnouncement) {
-      return res.status(404).json({
-        status: false,
-        message: "Announcement not found",
-        data: false,
-      });
-    }
 
     return res.status(200).json({
       status: true,
@@ -120,7 +79,102 @@ const updateAnnouncement = async (req, res) => {
   }
 };
 
+const getAllAnnouncements = async (req, res) => {
+  try {
+    const announcements = await Announcements.find().populate('stream').sort({ createdAt: -1 });
+    return res.status(200).json({
+      status: true,
+      message: "All announcements fetched successfully",
+      data: announcements,
+    });
+  } catch (error) {
+    console.error("Error fetching announcements:", error);
+    return res.status(500).json({
+      status: false,
+      message: "Server error while fetching announcements",
+      data: false,
+    });
+  }
+};
+const deleteAnnouncement = async (req, res) => {
+  try {
+    const { _id } = req.body;
+
+    if (!_id) {
+      return res.status(400).json({
+        status: false,
+        message: "Announcement _id is required",
+        data: false,
+      });
+    }
+
+    const deleted = await Announcements.findByIdAndDelete(_id);
+
+    if (!deleted) {
+      return res.status(404).json({
+        status: false,
+        message: "Announcement not found",
+        data: false,
+      });
+    }
+
+    return res.status(200).json({
+      status: true,
+      message: "Announcement deleted successfully",
+      data: deleted,
+    });
+  } catch (error) {
+    console.error("Error deleting announcement:", error);
+    return res.status(500).json({
+      status: false,
+      message: "Server error while deleting announcement",
+      data: false,
+    });
+  }
+};
+const toggleAnnouncementStatus = async (req, res) => {
+  try {
+    const { _id, status } = req.body;
+
+    if (!_id || typeof status !== "boolean") {
+      return res.status(400).json({
+        status: false,
+        message: "_id and boolean status are required",
+        data: false,
+      });
+    }
+
+    const announcement = await Announcements.findById(_id);
+    if (!announcement) {
+      return res.status(404).json({
+        status: false,
+        message: "Announcement not found",
+        data: false,
+      });
+    }
+
+    announcement.status = status;
+    const updated = await announcement.save();
+
+    return res.status(200).json({
+      status: true,
+      message: `Announcement ${status ? "activated" : "deactivated"} successfully`,
+      data: updated,
+    });
+  } catch (error) {
+    console.error("Error toggling status:", error);
+    return res.status(500).json({
+      status: false,
+      message: "Server error while updating status",
+      data: false,
+    });
+  }
+};
 module.exports = {
   addAnnouncement,
   updateAnnouncement,
-}
+  deleteAnnouncement,
+  toggleAnnouncementStatus,
+  getAllAnnouncements,
+};
+

@@ -1,11 +1,14 @@
 const express = require("express");
 const router = express.Router();
 
-// import Controllers
+// Import Controllers
 const { announcementController } = require("../controller");
 
 // Define Routes
 router.post("/", announcementController.addAnnouncement);
 router.post("/update", announcementController.updateAnnouncement);
+router.post("/delete", announcementController.deleteAnnouncement);
+router.post("/toggle-status", announcementController.toggleAnnouncementStatus);
+router.get("/all", announcementController.getAllAnnouncements); // Optional: Get all announcements
 
 module.exports = router;
