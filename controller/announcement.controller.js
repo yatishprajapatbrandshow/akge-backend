@@ -1,4 +1,5 @@
-const { Announcements } = require("../models");
+const { default: mongoose } = require("mongoose");
+const { Announcements, School } = require("../models");
 
 const addAnnouncement = async (req, res) => {
   try {
@@ -81,15 +82,6 @@ const updateAnnouncement = async (req, res) => {
 
 const getAllAnnouncements = async (req, res) => {
   try {
-    const { stream } = req.query;
-    const query = {}
-    if (stream) {
-      const checkValidStream = await School.findOne({ _id: stream });
-      if (checkValidStream) {
-        query.stream = stream;
-        query.status = true;
-      }
-    }
     const announcements = await Announcements.find().populate('stream').sort({ createdAt: -1 });
     return res.status(200).json({
       status: true,
@@ -105,6 +97,59 @@ const getAllAnnouncements = async (req, res) => {
     });
   }
 };
+const getAllAnnouncementsByStream = async (req, res) => {
+  try {
+    const { stream } = req.query;
+
+    const query = {
+      status: true,
+    };
+
+    if (stream) {
+      const isValidObjectId = mongoose.Types.ObjectId.isValid(stream);
+      if (isValidObjectId) {
+        const streamExists = await School.exists({ _id: stream });
+        if (streamExists) {
+          query.stream = new mongoose.Types.ObjectId(stream);
+        } else {
+          // Don't filter by stream at all if invalid stream is provided
+          query.stream = null; // Will never match anything
+        }
+      } else {
+        // Invalid objectId format: also ensure nothing returns
+        query.stream = null;
+      }
+    } else {
+      // If no stream provided, fetch announcements with no stream
+      query.$or = [
+        { stream: { $exists: false } },
+        { stream: null },
+        { stream: "" },
+      ];
+    }
+
+    console.log("Final query:", query);
+
+    const announcements = await Announcements.find(query)
+      // .populate("stream")
+      // .sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      status: true,
+      message: "All announcements fetched successfully",
+      data: announcements,
+    });
+  } catch (error) {
+    console.error("Error fetching announcements:", error);
+    return res.status(500).json({
+      status: false,
+      message: "Server error while fetching announcements",
+      data: false,
+    });
+  }
+};
+
+
 const deleteAnnouncement = async (req, res) => {
   try {
     const { _id } = req.body;
@@ -185,5 +230,6 @@ module.exports = {
   deleteAnnouncement,
   toggleAnnouncementStatus,
   getAllAnnouncements,
+  getAllAnnouncementsByStream
 };
 
