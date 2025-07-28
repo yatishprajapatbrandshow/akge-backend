@@ -30,6 +30,10 @@ const highlightBannerSchema = new mongoose.Schema(
       type: String,
       required: true
     },
+    stream: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'School', // Name of the referenced model
+    },
     status: {
       type: Boolean,
       default: true,
