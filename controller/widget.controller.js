@@ -16,13 +16,27 @@ const getWidgetData = async (req, res) => {
         // Prepare query
         const query = {
             deleteflag: false,
-            status: true,
-            type: type.trim()
+            status: true
         };
+        if (type) {
+            query.type = type
+        }
 
+        if (type == "News") {
+            query.ComponentType = "news-details"
+        } else if (type == "Event") {
+            query.ComponentType = "event-details"
+        }
+        else if (type == "Article") {
+            query.ComponentType = "article-details"
+        }
+        else if (type == "Circular") {
+            query.ComponentType = "circular-details"
+        }
         if (stream && stream !== 'All') {
             query.stream = stream;
         }
+
 
         const parsedLimit = Math.min(parseInt(limit), 100) || 10;
         const parsedPage = Math.max(parseInt(page), 1) || 1;
