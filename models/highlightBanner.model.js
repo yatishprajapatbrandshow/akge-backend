@@ -2,37 +2,45 @@ const mongoose = require("mongoose");
 
 const highlightBannerSchema = new mongoose.Schema(
   {
-    pageid: {
-      type: Number,
-      required: true,
-    },
     banner: {
       type: String,
       required: true,
+      trim: true,
     },
     title: {
       type: String,
       required: true,
+      trim: true,
     },
     description: {
       type: String,
-      required: true,
+      trim: true,
+    },
+    bannerAlt:{
+      type: String,
     },
     link: {
       type: String,
       required: true,
+      trim: true,
     },
     order: {
       type: Number,
-      required: true,
     },
     size: {
       type: String,
-      required: true
+      required: true,
+      trim: true,
+    },
+    tags: {
+      type: [String],
+      required: true,
+      default: [],
     },
     stream: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'School', // Name of the referenced model
+      ref: "School",
+      required: false, // optional
     },
     status: {
       type: Boolean,
@@ -46,9 +54,7 @@ const highlightBannerSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const HighlightBanner = mongoose.model(
-  "highlightBanner",
-  highlightBannerSchema
-);
+// Use PascalCase for the model name
+const HighlightBanner = mongoose.model("HighlightBanner", highlightBannerSchema);
 
 module.exports = HighlightBanner;

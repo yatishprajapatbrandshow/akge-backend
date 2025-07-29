@@ -1,47 +1,49 @@
-const { HighlightBanner, Slug } = require("../models");
+const { HighlightBanner } = require("../models");
 
 /**
  * Add a new highlight banner
  */
 const addHighlightBanner = async (req, res) => {
   try {
-    const { pageid, banner, description, link, size, title, stream } = req.body;
-
-    // Validate required fields
-    if (!pageid || !banner || !description || !link || !title || !size || !stream) {
-      return res.status(400).json({
-        status: false,
-        message: "All fields are required: pageid, banner, description, link, title, size, stream.",
-        data: false,
-      });
-    }
-    if (typeof pageid !== "number") {
-      return res.status(400).json({
-        status: false,
-        message: "Invalid pageid. Must be a number.",
-        data: false,
-      });
-    }
-    const checkpageid = await Slug.findOne({ page_id: pageid });
-    if (!checkpageid) {
-      return res.status(400).json({
-        status: false,
-        message: "Invalid pageid. Page not found.",
-        data: false,
-      });
-    }
-    const checkBanner = await HighlightBanner.findOne({}).sort({ order: -1 });
-    // Create new highlight banner
-    const newBanner = new HighlightBanner({
-      pageid,
+    const {
       banner,
       description,
       link,
-      order: checkBanner ? checkBanner.order + 1 : 1,
       size,
       title,
-      stream
+      stream,
+      bannerAlt,
+      tags = [], // optional, defaults to empty array
+    } = req.body;
+
+    // Validate required fields
+    const requiredFields = {  banner, description, link, size, title };
+    for (const [key, value] of Object.entries(requiredFields)) {
+      if (!value) {
+        return res.status(400).json({
+          status: false,
+          message: `${key} is required.`,
+          data: false,
+        });
+      }
+    }
+    // Get the current max order
+    const lastBanner = await HighlightBanner.findOne().sort({ order: -1 });
+    const nextOrder = lastBanner ? lastBanner.order + 1 : 1;
+
+    // Create new banner
+    const newBanner = new HighlightBanner({
+      banner,
+      title,
+      description,
+      link,
+      order: nextOrder,
+      size,
+      tags,
+      bannerAlt,
+      stream: stream || null,
     });
+
     await newBanner.save();
 
     return res.status(201).json({
@@ -49,12 +51,14 @@ const addHighlightBanner = async (req, res) => {
       message: "Highlight banner added successfully.",
       data: newBanner,
     });
-  } catch (error) {
-    console.log(error);
 
-    return res
-      .status(500)
-      .json({ status: false, message: error.message, data: false });
+  } catch (error) {
+    console.error("Error in addHighlightBanner:", error.message);
+    return res.status(500).json({
+      status: false,
+      message: "Internal server error.",
+      data: false,
+    });
   }
 };
 /**
@@ -62,9 +66,20 @@ const addHighlightBanner = async (req, res) => {
  */
 const updateHighlightBanner = async (req, res) => {
   try {
-    const { _id, pageid, banner, description, link, status, size, title, stream } = req.body;
+    const {
+      _id,
+      banner,
+      description,
+      link,
+      status,
+      size,
+      title,
+      bannerAlt,
+      stream,
+      tags = [],
+    } = req.body;
 
-    // Validate required fields
+    // Validate ID
     if (!_id) {
       return res.status(400).json({
         status: false,
@@ -73,25 +88,23 @@ const updateHighlightBanner = async (req, res) => {
       });
     }
 
-    if (typeof pageid !== "number") {
-      return res.status(400).json({
-        status: false,
-        message: "Invalid pageid. Must be a number.",
-        data: false,
-      });
-    }
-    const checkpageid = await Slug.findOne({ page_id: pageid });
-    if (!checkpageid) {
-      return res.status(400).json({
-        status: false,
-        message: "Invalid pageid. Page not found.",
-        data: false,
-      });
-    }
-    // Find and update banner
+
+    // Build update object
+    const updateFields = {
+      ...(banner && { banner: banner.trim() }),
+      ...(description && { description: description.trim() }),
+      ...(link && { link: link.trim() }),
+      ...(typeof status === "boolean" && { status }),
+      ...(size && { size: size.trim() }),
+      ...(title && { title: title.trim() }),
+      ...(bannerAlt && { bannerAlt: bannerAlt.trim() }),  
+      ...(stream && { stream }),
+      ...(Array.isArray(tags) && { tags }),
+    };
+
     const updatedBanner = await HighlightBanner.findByIdAndUpdate(
       _id,
-      { pageid, banner, description, link, status, size, title, stream },
+      updateFields,
       { new: true, runValidators: true }
     );
 
@@ -109,9 +122,12 @@ const updateHighlightBanner = async (req, res) => {
       data: updatedBanner,
     });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ status: false, message: error.message, data: false });
+    console.error("Error in updateHighlightBanner:", error.message);
+    return res.status(500).json({
+      status: false,
+      message: "Internal server error.",
+      data: false,
+    });
   }
 };
 /**
@@ -177,7 +193,6 @@ const getHighlightBannerById = async (req, res) => {
       .json({ status: false, message: error.message, data: false });
   }
 };
-
 /**
  * Get highlight banners List
  */
@@ -189,7 +204,6 @@ const getHighlightBannerList = async (req, res) => {
       sortBy = "order",
       sortOrder = "asc",
       status,
-      pageid,
     } = req.query;
 
     const query = {
@@ -198,10 +212,6 @@ const getHighlightBannerList = async (req, res) => {
 
     if (status !== undefined && status !== "") {
       query.status = status === "true";
-    }
-
-    if (pageid !== undefined && pageid !== "") {
-      query.pageid = parseInt(pageid);
     }
 
     const sortOptions = {};
@@ -243,32 +253,76 @@ const getHighlightBannerList = async (req, res) => {
     });
   }
 };
+
 /**
- * Get highlight banners by page ID
+ * Get highlight banners by stream and/or tags
  */
-const getHighlightBannerByPageId = async (req, res) => {
+const getHighlightBannerByTagsAndStream = async (req, res) => {
   try {
-    const { pageid } = req.params;
+    const {
+      page = 1,
+      limit = 10,
+      sortBy = "order",
+      sortOrder = "asc",
+      status = "true",
+      tags = [],
+      stream,
+    } = req.query;
 
-    const banners = await HighlightBanner.find({ pageid, deleteflag: false }).populate('stream');
+    const currentPage = parseInt(page);
+    const itemsPerPage = parseInt(limit);
+    const sortOptions = { [sortBy]: sortOrder === "desc" ? -1 : 1 };
 
-    if (!banners.length) {
-      return res.status(404).json({
-        status: false,
-        message: "No highlight banners found for the given page ID.",
-        data: false,
-      });
+    const query = {
+      deleteflag: false,
+    };
+
+    // Apply status (default: true)
+    if (status !== "") {
+      query.status = status === "true";
     }
+
+    // If stream is present
+    if (stream) {
+      query.stream = stream;
+    }
+
+    // If tags is present and an array
+    if (Array.isArray(tags) && tags.length > 0) {
+      query.tags = { $in: tags };
+    }
+
+    const totalItems = await HighlightBanner.countDocuments(query);
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+    const banners = await HighlightBanner.find(query)
+      .populate("stream")
+      .sort(sortOptions)
+      .skip((currentPage - 1) * itemsPerPage)
+      .limit(itemsPerPage);
 
     return res.status(200).json({
       status: true,
       message: "Highlight banners fetched successfully.",
-      data: banners,
+      data: {
+        banners,
+        pagination: {
+          currentPage,
+          totalPages,
+          totalItems,
+          itemsPerPage,
+          hasPrevPage: currentPage > 1,
+          hasNextPage: currentPage < totalPages,
+        },
+      },
     });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ status: false, message: error.message, data: false });
+    console.error("Error in getHighlightBannerByTagsAndStream:", error);
+    return res.status(500).json({
+      status: false,
+      message: "Internal server error",
+      data: false,
+    });
   }
 };
 module.exports = {
@@ -277,5 +331,5 @@ module.exports = {
   updateHighlightBanner,
   deleteHighlightBanner,
   getHighlightBannerById,
-  getHighlightBannerByPageId,
+  getHighlightBannerByTagsAndStream
 };

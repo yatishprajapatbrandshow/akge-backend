@@ -128,8 +128,6 @@ const getAllAnnouncementsByStream = async (req, res) => {
       ];
     }
 
-    console.log("Final query:", query);
-
     const announcements = await Announcements.find(query)
       // .populate("stream")
       // .sort({ createdAt: -1 });

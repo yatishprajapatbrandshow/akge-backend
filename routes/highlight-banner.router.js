@@ -10,6 +10,6 @@ router.post("/update", highlightBannerController.updateHighlightBanner);
 router.post("/delete", highlightBannerController.deleteHighlightBanner);
 router.get("/", highlightBannerController.getHighlightBannerById);
 router.get("/list", highlightBannerController.getHighlightBannerList);
-router.get("/page-id", highlightBannerController.getHighlightBannerByPageId);
+router.get("/highlight-banners/filter", highlightBannerController.getHighlightBannerByTagsAndStream);
 
 module.exports = router;
