@@ -4,6 +4,9 @@ const cookieParser = require("cookie-parser");
 require("dotenv").config();
 const cors = require("cors");
 const app = express();
+
+app.set('trust proxy', 1);
+
 const PORT = process.env.PORT || 5000;
 // Import Routers
 const {
@@ -33,12 +36,15 @@ connectDB();
 const allowedOrigins = ["http://localhost:3000", "https://new-akg.vercel.app", "https://vs4l9npm-3000.inc1.devtunnels.ms"];
 // Middleware
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
+  origin: (origin, callback) => {
+    // Allow requests with no origin (mobile apps, curl, etc)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, origin);
     }
+
+    return callback(new Error('Not allowed by CORS'));
   },
   credentials: true
 }));
