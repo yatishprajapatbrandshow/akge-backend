@@ -45,8 +45,9 @@ const auth = async (req, res) => {
 
       res.cookie("token", token, {
         httpOnly: true,
-        secure: isProd,
-        sameSite: isProd ? 'None' : 'Lax',
+        secure: isProd, // true in prod (required for SameSite=None)
+        sameSite: isProd ? 'None' : 'Lax', // None for cross-origin, Lax for local dev
+        domain: isProd ? '.onrender.com' : undefined, // for Render hosting
         expires: new Date(Date.now() + 24 * 3600000),
       });
 
