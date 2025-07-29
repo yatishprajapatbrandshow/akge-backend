@@ -1,14 +1,3 @@
-const express = require("express");
-const connectDB = require("./db");
-const cookieParser = require("cookie-parser");
-require("dotenv").config();
-const cors = require("cors");
-const app = express();
-
-app.set('trust proxy', 1);
-
-const PORT = process.env.PORT || 5000;
-// Import Routers
 const {
   adminRouter,
   slugRouter,
@@ -29,22 +18,34 @@ const {
   widgetRouter
 } = require("./routes");
 const { userAuth } = require("./middlewares/auth");
+const express = require("express");
+const connectDB = require("./db");
+const cookieParser = require("cookie-parser");
+require("dotenv").config();
+const cors = require("cors");
+const app = express();
+app.set('trust proxy', 1);
+
+const PORT = process.env.PORT || 5000;
+// Import Routers
 
 // Connect to the database
 connectDB();
 
-const allowedOrigins = ["http://localhost:3000", "https://new-akg.vercel.app", "https://vs4l9npm-3000.inc1.devtunnels.ms"];
-// Middleware
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://new-akg.vercel.app",
+  "https://vs4l9npm-3000.inc1.devtunnels.ms",
+  "https://*.onrender.com"  // Allow all Render subdomains
+];
+
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (mobile apps, curl, etc)
     if (!origin) return callback(null, true);
-
-    if (allowedOrigins.includes(origin)) {
+    if (allowedOrigins.some(allowed => origin.match(new RegExp(`^https?://${allowed.replace('*.', '.*\.')}(:\d+)?$`)))) {
       return callback(null, origin);
     }
-
-    return callback(new Error('Not allowed by CORS'));
+    callback(new Error('Not allowed by CORS'));
   },
   credentials: true
 }));
