@@ -41,10 +41,12 @@ const auth = async (req, res) => {
 
     if (isPasswordValid) {
       const token = await user.getJWT();
+      const isProd = process.env.NODE_ENV === 'production';
+
       res.cookie("token", token, {
         httpOnly: true,
-        secure: true,
-        sameSite: "None",
+        secure: isProd,
+        sameSite: isProd ? 'None' : 'Lax',
         expires: new Date(Date.now() + 24 * 3600000),
       });
 
@@ -104,7 +106,9 @@ const register = async (req, res) => {
 
 const logout = async (req, res) => {
   res.cookie("token", null, {
-    expires: new Date(Date.now())
+    expires: new Date(Date.now()),
+    sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+    secure: process.env.NODE_ENV === 'production',
   });
 
   res.status(200).json({ message: "Logged out successfully" });
