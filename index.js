@@ -35,20 +35,34 @@ connectDB();
 const allowedOrigins = [
   "http://localhost:3000",
   "https://new-akg.vercel.app",
-  "https://vs4l9npm-3000.inc1.devtunnels.ms",
-  "https://*.onrender.com"  // Allow all Render subdomains
+  "https://vs4l9npm-3000.inc1.devtunnels.ms"
 ];
 
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.some(allowed => origin.match(new RegExp(`^https?://${allowed.replace('*.', '.*\.')}(:\d+)?$`)))) {
-      return callback(null, origin);
-    }
-    callback(new Error('Not allowed by CORS'));
-  },
-  credentials: true
-}));
+// Custom function to allow subdomains of onrender.com
+function isAllowedOrigin(origin) {
+  try {
+    const url = new URL(origin);
+    return (
+      allowedOrigins.includes(origin) ||
+      url.hostname.endsWith(".onrender.com")
+    );
+  } catch (e) {
+    return false;
+  }
+}
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || isAllowedOrigin(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
 
 app.use(express.json()); // To parse JSON request bodies
 app.use(cookieParser());
