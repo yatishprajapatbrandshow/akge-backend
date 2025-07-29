@@ -30,15 +30,18 @@ const { userAuth } = require("./middlewares/auth");
 // Connect to the database
 connectDB();
 
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      // Allow all origins but still enable credentials
-      callback(null, origin);
-    },
-    credentials: true,
-  })
-);
+const allowedOrigins = ["http://localhost:3000", "https://new-akg.vercel.app"];
+// Middleware
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true
+}));
 
 app.use(express.json()); // To parse JSON request bodies
 app.use(cookieParser());
