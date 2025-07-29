@@ -597,13 +597,10 @@ const getBySlug = async (req, res) => {
       return acc;
     }, {});
 
-    const highlightBanner = await HighlightBanner.find({ pageid: data?.page_id, status: true, deleteflag: false })
-
     const finalData = {
       ...data,
       extraComponentData: formattedExtraParams || false,
       breadCrumb: breadcrumb || false,
-      highlightBanner: highlightBanner || false,
       banner_img: imagePath + data?.banner_img
     };
 
