@@ -30,7 +30,7 @@ const { userAuth } = require("./middlewares/auth");
 // Connect to the database
 connectDB();
 
-const allowedOrigins = ["http://localhost:3000", "https://new-akg.vercel.app"];
+const allowedOrigins = ["http://localhost:3000", "https://new-akg.vercel.app", "https://vs4l9npm-3000.inc1.devtunnels.ms"];
 // Middleware
 app.use(cors({
   origin: function (origin, callback) {
