@@ -79,7 +79,7 @@ app.use("/api/static-page", userAuth, staticPageRouter);
 app.use("/api/announcement", userAuth, announcementRouter);
 
 // static-page page
-app.use("/api/highlight-banner", userAuth, highlightBannerRouter);
+app.use("/api/highlight-banner", highlightBannerRouter);
 
 // static-page page
 app.use("/api/components", userAuth, componentRouter);

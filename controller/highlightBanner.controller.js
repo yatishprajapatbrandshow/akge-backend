@@ -268,7 +268,7 @@ const getHighlightBannerByTagsAndStream = async (req, res) => {
       tags = [],
       stream,
     } = req.query;
-
+    
     const currentPage = parseInt(page);
     const itemsPerPage = parseInt(limit);
     const sortOptions = { [sortBy]: sortOrder === "desc" ? -1 : 1 };
