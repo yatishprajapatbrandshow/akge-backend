@@ -1,11 +1,3 @@
-const express = require("express");
-const connectDB = require("./db");
-const cookieParser = require("cookie-parser");
-require("dotenv").config();
-const cors = require("cors");
-const app = express();
-const PORT = process.env.PORT || 5000;
-// Import Routers
 const {
   adminRouter,
   slugRouter,
@@ -26,22 +18,51 @@ const {
   widgetRouter
 } = require("./routes");
 const { userAuth } = require("./middlewares/auth");
+const express = require("express");
+const connectDB = require("./db");
+const cookieParser = require("cookie-parser");
+require("dotenv").config();
+const cors = require("cors");
+const app = express();
+app.set('trust proxy', 1);
+
+const PORT = process.env.PORT || 5000;
+// Import Routers
 
 // Connect to the database
 connectDB();
 
-const allowedOrigins = ["http://localhost:3000", "https://new-akg.vercel.app"];
-// Middleware
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true
-}));
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://new-akg.vercel.app",
+  "https://vs4l9npm-3000.inc1.devtunnels.ms"
+];
+
+// Custom function to allow subdomains of onrender.com
+function isAllowedOrigin(origin) {
+  try {
+    const url = new URL(origin);
+    return (
+      allowedOrigins.includes(origin) ||
+      url.hostname.endsWith(".onrender.com")
+    );
+  } catch (e) {
+    return false;
+  }
+}
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || isAllowedOrigin(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
 
 app.use(express.json()); // To parse JSON request bodies
 app.use(cookieParser());
