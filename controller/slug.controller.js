@@ -90,7 +90,8 @@ const update = async (req, res) => {
       ComponentType,
       stream,
       mainReportImage,
-      downloadCenterPdf
+      downloadCenterPdf,
+      galleryimg = []
     } = req.body;
 
     // Validate required fields
@@ -231,7 +232,8 @@ const update = async (req, res) => {
         ComponentType,
         stream,
         mainReportImage,
-        downloadCenterPdf
+        downloadCenterPdf,
+        galleryimg
       },
       { new: true } // Return the updated document
     );
