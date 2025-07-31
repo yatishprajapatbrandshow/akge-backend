@@ -9,6 +9,9 @@ const Announcements = require("./announcement.model");
 const HighlightBanner = require("./highlightBanner.model");
 const Components = require('./Components.model')
 const ExtraParamsData = require('./ExtraParamsData.model')
+const Application = require('./application.model')
+
+
 module.exports = {
   Admin,
   Slug,
@@ -20,5 +23,6 @@ module.exports = {
   Announcements,
   HighlightBanner,
   Components,
-  ExtraParamsData
+  ExtraParamsData,
+  Application
 };

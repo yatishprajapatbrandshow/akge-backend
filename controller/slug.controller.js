@@ -1,40 +1,24 @@
-const { Slug, ExtraParamsData, HighlightBanner } = require("../models");
-const bcrypt = require("bcryptjs");
+const { Slug, ExtraParamsData } = require("../models");
 const imagePath = "https://csip-image.blr1.digitaloceanspaces.com/csip-image"
-// const jwt = require('jsonwebtoken');
 const generateUniqueId = async (existingIds) => {
   let id;
   do {
-    // Generate a random number (you can adjust the range as needed)
     id = Math.floor(Math.random() * 1000000);
-  } while (existingIds.includes(id)); // Ensure the ID is unique
+  } while (existingIds.includes(id));
   return id;
 };
 function createPathFromTitle(title) {
-  // Remove special characters, keep only letters, numbers, and spaces
   const sanitizedTitle = title
-    .replace(/[^a-zA-Z0-9\s]/g, "") // Remove special characters
-    .trim(); // Remove leading/trailing whitespace
+    .replace(/[^a-zA-Z0-9\s]/g, "")
+    .trim();
 
-  // Convert to lowercase and replace spaces with hyphens
-  const path = sanitizedTitle.toLowerCase().replace(/\s+/g, "-"); // Replace spaces with hyphens
+  const path = sanitizedTitle.toLowerCase().replace(/\s+/g, "-");
 
   return "/" + path;
 }
-function createPathFromTitle(title) {
-  // Remove special characters, keep only letters, numbers, and spaces
-  const sanitizedTitle = title
-    .replace(/[^a-zA-Z0-9\s]/g, "") // Remove special characters
-    .trim(); // Remove leading/trailing whitespace
 
-  // Convert to lowercase and replace spaces with hyphens
-  const path = sanitizedTitle.toLowerCase().replace(/\s+/g, "-"); // Replace spaces with hyphens
-
-  return "/" + path;
-}
 const update = async (req, res) => {
   try {
-    // Destructure the request body with default values
     const {
       page_id,
       parent_id = 0,
@@ -45,7 +29,6 @@ const update = async (req, res) => {
       date,
       shortdesc,
       description,
-      // params
       param1,
       paramvalue1,
       param_img1,
@@ -107,7 +90,8 @@ const update = async (req, res) => {
       ComponentType,
       stream,
       mainReportImage,
-      downloadCenterPdf
+      downloadCenterPdf,
+      galleryimg = []
     } = req.body;
 
     // Validate required fields
@@ -248,7 +232,8 @@ const update = async (req, res) => {
         ComponentType,
         stream,
         mainReportImage,
-        downloadCenterPdf
+        downloadCenterPdf,
+        galleryimg
       },
       { new: true } // Return the updated document
     );
