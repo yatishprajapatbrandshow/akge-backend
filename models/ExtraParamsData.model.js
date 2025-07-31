@@ -18,7 +18,7 @@ const ParamSchema = new mongoose.Schema({
     editedby: { type: String },
     deleteflag: { type: Boolean, default: false },
     calid: { type: String },
-    extraData: { type: Array }
+    extraData: { type: Array,default:[] }
 });
 
 // Enforce unique constraint on combination of pageid and holder
