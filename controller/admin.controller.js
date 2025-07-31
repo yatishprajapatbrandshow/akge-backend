@@ -105,14 +105,8 @@ const register = async (req, res) => {
 };
 
 const logout = async (req, res) => {
-  const isProd = process.env.NODE_ENV === 'production';
-  
-  res.cookie("token", "", {
-    expires: new Date(0),
-    httpOnly: true,
-    secure: isProd,
-    sameSite: isProd ? 'None' : 'Lax',
-    path: '/'  // Add path for consistency
+  res.cookie("token", null, {
+    expires: new Date(Date.now())
   });
 
   res.status(200).json({ message: "Logged out successfully" });
