@@ -4,20 +4,64 @@ exports.createParam = async (req, res) => {
     try {
         const data = req.body;
 
-        // Check if holder already exists for the same pageid
-        const exists = await ExtraParamsData.findOne({ pageid: data.pageid, holder: data.holder, deleteflag: false });
-        if (exists) {
-            return res.json({ status: false, message: `${data.holder} already exists for This Page`, data: false });
+        // Ensure required fields are present
+        if (!data?.pageid || !data?.holder || !data?.param || !data?.type) {
+            return res.json({
+                status: false,
+                message: "Missing required fields: pageid, holder, param, type",
+                data: false
+            });
         }
 
-        const param = new ExtraParamsData(data);
+        // Check for existing holder under the same pageid
+        const exists = await ExtraParamsData.findOne({
+            pageid: data?.pageid,
+            holder: data?.holder,
+            deleteflag: false
+        });
+
+        if (exists) {
+            return res.json({
+                status: false,
+                message: `${data?.holder} already exists for this page.`,
+                data: false
+            });
+        }
+
+        // Create new Param entry
+        const param = new ExtraParamsData({
+            pageid: data?.pageid,
+            param: data?.param,
+            paramDesc: data?.paramDesc || "",
+            paramImg: data?.paramImg || [],
+            paramUrl: data?.paramUrl || "",
+            orderSequence: data?.orderSequence || 0,
+            type: data?.type,
+            holder: data?.holder,
+            widgetType: data?.widgetType || "",
+            status: data?.status !== undefined ? data?.status : true,
+            addedby: data?.addedby || "",
+            calid: data?.calid || "",
+            extraData: data?.extraData || []
+        });
+
         await param.save();
-        
-        res.json({ status: true, message: "Holder Added SuccesssFully", data: param });
+
+        return res.json({
+            status: true,
+            message: "Holder added successfully.",
+            data: param
+        });
     } catch (error) {
-        res.json({ status: false, message: error.message, data: false });
+        console.error(error);
+        return res.json({
+            status: false,
+            message: error.message,
+            data: false
+        });
     }
 };
+
 
 exports.getAllParams = async (req, res) => {
     try {
@@ -40,11 +84,22 @@ exports.getParamById = async (req, res) => {
     }
 };
 
+// controllers/param.controller.js
 exports.updateParam = async (req, res) => {
     try {
         const id = req.params.id;
         const data = req.body;
 
+        // Validate ID format
+        if (!id) {
+            return res.json({
+                status: false,
+                message: "ID is required in params",
+                data: false
+            });
+        }
+
+        // Check if same pageid + holder combo already exists (excluding current document)
         const existing = await ExtraParamsData.findOne({
             _id: { $ne: id },
             pageid: data.pageid,
@@ -53,16 +108,38 @@ exports.updateParam = async (req, res) => {
         });
 
         if (existing) {
-            return res.json({ status: false, message: "Same holder already exists for this pageid", data: false });
+            return res.json({
+                status: false,
+                message: `The holder '${data.holder}' already exists for this page.`,
+                data: false
+            });
         }
 
         data.editedon = new Date();
 
+        // Perform update
         const updated = await ExtraParamsData.findByIdAndUpdate(id, data, { new: true });
 
-        res.json({ status: true, message: "ExtraParamsData updated", data: updated });
+        if (!updated) {
+            return res.json({
+                status: false,
+                message: "No entry found with the given ID.",
+                data: false
+            });
+        }
+
+        res.json({
+            status: true,
+            message: "Param updated successfully.",
+            data: updated
+        });
+
     } catch (error) {
-        res.json({ status: false, message: error.message, data: false });
+        res.json({
+            status: false,
+            message: error.message,
+            data: false
+        });
     }
 };
 

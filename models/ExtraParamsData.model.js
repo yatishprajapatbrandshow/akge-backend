@@ -5,7 +5,7 @@ const ParamSchema = new mongoose.Schema({
     pageid: { type: String, required: true },
     param: { type: String, required: true },
     paramDesc: { type: String },
-    paramImg: { type: String },
+    paramImg: { type: [String] },
     paramUrl: { type: String },
     orderSequence: { type: Number, default: 0 },
     type: { type: String, required: true }, // Multiple values allowed
@@ -17,7 +17,8 @@ const ParamSchema = new mongoose.Schema({
     editedon: { type: Date },
     editedby: { type: String },
     deleteflag: { type: Boolean, default: false },
-    calid: { type: String }
+    calid: { type: String },
+    extraData: { type: Array }
 });
 
 // Enforce unique constraint on combination of pageid and holder

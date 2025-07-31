@@ -5,7 +5,6 @@ const Circular = require("./circular.model");
 const School = require("./schools.model");
 const Departments = require("./department.model");
 const Faculty = require("./faculty.model");
-const Toppers = require("./topperList.model");
 const Announcements = require("./announcement.model");
 const HighlightBanner = require("./highlightBanner.model");
 const Components = require('./Components.model')
@@ -18,7 +17,6 @@ module.exports = {
   School,
   Departments,
   Faculty,
-  Toppers,
   Announcements,
   HighlightBanner,
   Components,
