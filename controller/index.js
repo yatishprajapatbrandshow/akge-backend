@@ -13,9 +13,11 @@ const extraParamsDataController = require('./extraParamsData.controller')
 const editPathController = require('./EditPath.controller');
 const newsDetailPageController = require('./newsDetailPage.controller');
 const dashboardController = require('./Dashboard.controller');
-
 const uploadfileController = require('./upload.controller');
 const widgetController = require('./widget.controller')
+const applicationController = require('./application.controller')
+
+
 module.exports = {
   adminController,
   slugController,
@@ -33,5 +35,6 @@ module.exports = {
   newsDetailPageController,
   uploadfileController,
   dashboardController,
-  widgetController
+  widgetController,
+  applicationController,
 };

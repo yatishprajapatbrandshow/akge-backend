@@ -15,6 +15,9 @@ const newsDetailPageRouter = require("./newsDetailPage.router");
 const uploadRouter = require("./upload.router");
 const dashboardRouter = require("./Dashboard.router");
 const widgetRouter = require('./widget.router')
+const applicationRouter = require('./application.router')
+
+
 module.exports = {
   adminRouter,
   slugRouter,
@@ -32,5 +35,6 @@ module.exports = {
   newsDetailPageRouter,
   uploadRouter,
   dashboardRouter,
-  widgetRouter
+  widgetRouter,
+  applicationRouter
 };
