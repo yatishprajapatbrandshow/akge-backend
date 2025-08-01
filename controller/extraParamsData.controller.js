@@ -41,7 +41,7 @@ exports.createParam = async (req, res) => {
             widgetType: data?.widgetType || "",
             status: data?.status !== undefined ? data?.status : true,
             addedby: data?.addedby || "",
-            calid: data?.calid || "",
+            pdfs: data?.pdfs || "",
             extraData: data?.extraData || []
         });
 
