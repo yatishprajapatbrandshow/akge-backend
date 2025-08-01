@@ -4,7 +4,6 @@ exports.createParam = async (req, res) => {
     try {
         const data = req.body;
 
-        // Ensure required fields are present
         if (!data?.pageid || !data?.holder || !data?.param || !data?.type) {
             return res.json({
                 status: false,
@@ -13,36 +12,36 @@ exports.createParam = async (req, res) => {
             });
         }
 
-        // Check for existing holder under the same pageid
         const exists = await ExtraParamsData.findOne({
-            pageid: data?.pageid,
-            holder: data?.holder,
+            pageid: data.pageid,
+            holder: data.holder,
             deleteflag: false
         });
 
         if (exists) {
             return res.json({
                 status: false,
-                message: `${data?.holder} already exists for this page.`,
+                message: `${data.holder} already exists for this page.`,
                 data: false
             });
         }
 
-        // Create new Param entry
         const param = new ExtraParamsData({
-            pageid: data?.pageid,
-            param: data?.param,
-            paramDesc: data?.paramDesc || "",
-            paramImg: data?.paramImg || [],
-            paramUrl: data?.paramUrl || "",
-            orderSequence: data?.orderSequence || 0,
-            type: data?.type,
-            holder: data?.holder,
-            widgetType: data?.widgetType || "",
-            status: data?.status !== undefined ? data?.status : true,
-            addedby: data?.addedby || "",
-            pdfs: data?.pdfs || "",
-            extraData: data?.extraData || []
+            pageid: data.pageid,
+            param: data.param,
+            subparam: data.subparam || "",
+            paramDesc: data.paramDesc || "",
+            paramImg: Array.isArray(data.paramImg) ? data.paramImg : [],
+            paramUrl: data.paramUrl || "",
+            orderSequence: data.orderSequence || 0,
+            type: data.type,
+            holder: data.holder,
+            widgetType: data.widgetType || "",
+            status: data.status !== undefined ? data.status : true,
+            addedby: data.addedby || "",
+            pdfs: Array.isArray(data.pdfs) ? data.pdfs : [],
+            params: Array.isArray(data.params) ? data.params : [],
+            extraData: Array.isArray(data.extraData) ? data.extraData : []
         });
 
         await param.save();
@@ -52,6 +51,7 @@ exports.createParam = async (req, res) => {
             message: "Holder added successfully.",
             data: param
         });
+
     } catch (error) {
         console.error(error);
         return res.json({
@@ -90,7 +90,6 @@ exports.updateParam = async (req, res) => {
         const id = req.params.id;
         const data = req.body;
 
-        // Validate ID format
         if (!id) {
             return res.json({
                 status: false,
@@ -99,7 +98,6 @@ exports.updateParam = async (req, res) => {
             });
         }
 
-        // Check if same pageid + holder combo already exists (excluding current document)
         const existing = await ExtraParamsData.findOne({
             _id: { $ne: id },
             pageid: data.pageid,
@@ -116,8 +114,14 @@ exports.updateParam = async (req, res) => {
         }
 
         data.editedon = new Date();
+        data.editedby = data.editedby || "";
 
-        // Perform update
+        // Normalize arrays
+        data.paramImg = Array.isArray(data.paramImg) ? data.paramImg : [];
+        data.pdfs = Array.isArray(data.pdfs) ? data.pdfs : [];
+        data.params = Array.isArray(data.params) ? data.params : [];
+        data.extraData = Array.isArray(data.extraData) ? data.extraData : [];
+
         const updated = await ExtraParamsData.findByIdAndUpdate(id, data, { new: true });
 
         if (!updated) {
@@ -142,6 +146,7 @@ exports.updateParam = async (req, res) => {
         });
     }
 };
+
 
 exports.deleteParam = async (req, res) => {
     try {

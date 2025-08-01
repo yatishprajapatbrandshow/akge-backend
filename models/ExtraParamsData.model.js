@@ -4,8 +4,9 @@ const mongoose = require('mongoose');
 const ParamSchema = new mongoose.Schema({
     pageid: { type: String, required: true },
     param: { type: String, required: true },
+    subparam: { type: String, default:"" },
     paramDesc: { type: String },
-    paramImg: { type: [String],default:[] },
+    paramImg: { type: [String], default: [] },
     paramUrl: { type: String },
     orderSequence: { type: Number, default: 0 },
     type: { type: String, required: true }, // Multiple values allowed
@@ -17,8 +18,9 @@ const ParamSchema = new mongoose.Schema({
     editedon: { type: Date },
     editedby: { type: String },
     deleteflag: { type: Boolean, default: false },
-    pdfs: { type: [String],default:[] },
-    extraData: { type: Array,default:[] }
+    pdfs: { type: [String], default: [] },
+    params: { type: [String], default: [] },
+    extraData: { type: Array, default: [] }
 });
 
 // Enforce unique constraint on combination of pageid and holder
