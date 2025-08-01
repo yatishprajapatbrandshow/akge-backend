@@ -259,7 +259,8 @@ const addPageInactive = async (req, res) => {
       price = 0,
       type,
       name,
-      ComponentType
+      ComponentType,
+      status
     } = req.body;
     // Validate required fields
     if (!name) {
@@ -318,13 +319,13 @@ const addPageInactive = async (req, res) => {
       slug,
       path,
       id_path,
-      status: false,
       addedon: Date.now(),
       addedby: "Admin",
       editedon: null,
       editedby: null,
       deleteflag: false,
-      ComponentType
+      ComponentType,
+      status: status ? true : false
     });
 
     // Save the new slug to the database

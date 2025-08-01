@@ -16,7 +16,7 @@ const dashboardController = require('./Dashboard.controller');
 const uploadfileController = require('./upload.controller');
 const widgetController = require('./widget.controller')
 const applicationController = require('./application.controller')
-
+const pageDataController =require('./pageData.controller')
 
 module.exports = {
   adminController,
@@ -37,4 +37,5 @@ module.exports = {
   dashboardController,
   widgetController,
   applicationController,
+  pageDataController
 };

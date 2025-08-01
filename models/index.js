@@ -10,6 +10,7 @@ const HighlightBanner = require("./highlightBanner.model");
 const Components = require('./Components.model')
 const ExtraParamsData = require('./ExtraParamsData.model')
 const Application = require('./application.model')
+const PageData = require('./pageData.model')
 
 
 module.exports = {
@@ -24,5 +25,6 @@ module.exports = {
   HighlightBanner,
   Components,
   ExtraParamsData,
-  Application
+  Application,
+  PageData
 };

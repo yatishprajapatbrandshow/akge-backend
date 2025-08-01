@@ -16,7 +16,8 @@ const {
   uploadRouter,
   dashboardRouter,
   widgetRouter,
-  applicationRouter
+  applicationRouter,
+  pageDataRouter
 } = require("./routes");
 const { userAuth } = require("./middlewares/auth");
 const express = require("express");
@@ -124,6 +125,8 @@ app.use("/api/widget", widgetRouter)
 
 // Application Router
 app.use("/api/applications", applicationRouter);
+
+app.use("/api/page-params", pageDataRouter);
 
 // Start the server
 app.listen(PORT || 3000, () => {
