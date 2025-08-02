@@ -108,7 +108,7 @@ const update = async (req, res) => {
     if (!existingSlug) {
       return res
         .status(404)
-        .json({ status: false, message: "Slug not found", data: false });
+        .json({ status: false, message: "Page not found", data: false });
     }
 
     // Generate updated slug and path if the name has changed
@@ -126,7 +126,7 @@ const update = async (req, res) => {
       if (duplicateSlug) {
         return res.status(400).json({
           status: false,
-          message: "Slug already exists",
+          message: "Page already exists with this title",
           data: false,
         });
       }
@@ -138,7 +138,7 @@ const update = async (req, res) => {
         if (!parentSlugDoc) {
           return res.status(400).json({
             status: false,
-            message: "Parent slug not found",
+            message: "Parent page not found",
             data: false,
           });
         }
@@ -240,7 +240,7 @@ const update = async (req, res) => {
 
     res.status(200).json({
       status: true,
-      message: "Slug updated successfully",
+      message: "Page updated successfully",
       data: updatedSlug,
     });
   } catch (error) {
@@ -294,7 +294,7 @@ const addPageInactive = async (req, res) => {
     if (existingSlug) {
       return res
         .status(400)
-        .json({ status: false, message: "Slug already exists", data: false });
+        .json({ status: false, message: "Page already exists with this title", data: false });
     }
 
     // Fetch existing IDs from the database
@@ -332,7 +332,7 @@ const addPageInactive = async (req, res) => {
     await newSlug.save();
     return res.status(201).json({
       status: true,
-      message: "Slug created successfully",
+      message: "Page created successfully",
       data: newSlug,
     });
   } catch (error) {
@@ -427,7 +427,7 @@ const getList = async (req, res) => {
     }
     return res.status(200).json({
       status: true,
-      message: "Slugs fetched successfully",
+      message: "Pages fetched successfully",
       data: slugs,
     });
   } catch (error) {
@@ -457,7 +457,7 @@ const getSlugByType = async (req, res) => {
 
     return res.status(200).json({
       status: true,
-      message: "Slugs fetched successfully",
+      message: "Pages fetched successfully",
       data: slugs,
     });
   } catch (error) {
@@ -491,13 +491,13 @@ const getById = async (req, res) => {
     if (!slug) {
       return res.status(404).json({
         status: false,
-        message: "Slug not found",
+        message: "Page not found",
         data: false,
       });
     }
     return res.status(200).json({
       status: true,
-      message: "Slug fetched successfully",
+      message: "Page fetched successfully",
       data: slug,
     });
   } catch (error) {
@@ -558,7 +558,7 @@ const getBySlug = async (req, res) => {
       return res.status(404).json({
         status: false,
         data: false,
-        message: 'path not found',
+        message: 'Page not found with this path : '+path,
       });
     }
 
