@@ -580,9 +580,11 @@ const getBySlug = async (req, res) => {
 
     // Convert array of `{ key, value }` to object
     const pageData = pageDataArray.reduce((acc, curr) => {
-      acc[curr.key] = curr.value;
+      const cleanKey = curr.key.replace(/\s+/g, '_');
+      acc[cleanKey] = curr.value;
       return acc;
     }, {});
+
 
     // Normalize and transform array to object
     const formattedExtraParams = extraParamsData.reduce((acc, item) => {
