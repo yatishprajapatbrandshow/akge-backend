@@ -572,7 +572,18 @@ const getBySlug = async (req, res) => {
     })
       .select('param paramDesc paramImg paramUrl orderSequence holder type widgetType extraData pdfs subparam params')
       .lean();
-    const pageData =await PageData.find({ pageid: data?.page_id, status: true, deleteflag: false }).select('key value')
+    const pageDataArray = await PageData.find({
+      pageid: data?.page_id,
+      status: true,
+      deleteflag: false
+    }).select('key value').lean();
+
+    // Convert array of `{ key, value }` to object
+    const pageData = pageDataArray.reduce((acc, curr) => {
+      acc[curr.key] = curr.value;
+      return acc;
+    }, {});
+
     // Normalize and transform array to object
     const formattedExtraParams = extraParamsData.reduce((acc, item) => {
       const normalizedKey = item.holder.toLowerCase().replace(/\s+/g, '');
