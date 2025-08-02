@@ -343,70 +343,60 @@ const addPageInactive = async (req, res) => {
   }
 };
 const getParent = async (req, res) => {
-  const { query = "", page = 1, limit = 10, type, } = req.body; // Allow parentId to be dynamic, default to 0
+  const { query = "", page = 1, limit = 10, type } = req.body;
 
   try {
-    // Calculate how many records to skip based on the current page and limit
     const skip = (page - 1) * limit;
 
-    let pages = [];
-    let total = 0;
+    const queryConditions = {
+      status: true,
+      deleteflag: false,
+    };
 
-    // Build query conditions for filtering
-    const queryConditions = {};
-
-    // If parentId is provided, add it to the filter
-    // queryConditions.parentId = parentId;
-
-    // If query (search term) is provided, add it to the filter
     if (query !== "") {
-      queryConditions.name = { $regex: query, $options: "i" }; // Case-insensitive search
+      queryConditions.name = { $regex: query, $options: "i" };
     }
 
-    // Check for status and deleteflag if provided (defaulting to true/false if not)
-    queryConditions.status = true;
-    queryConditions.deleteflag = false;
-
-    // If `type` is provided, add it to the conditions
     if (type) {
-      queryConditions.type = type;
+      if (Array.isArray(type)) {
+        queryConditions.type = { $in: type };
+      } else {
+        queryConditions.type = type;
+      }
     }
 
-    // Find pages based on conditions
-    pages = await Slug.find(queryConditions, { name: 1, page_id: 1 }) // Project only `name` and `page_id`
-      .skip(skip) // Skip pages based on pagination
-      .limit(limit); // Limit the number of pages returned
+    const pages = await Slug.find(queryConditions, { name: 1, page_id: 1 })
+      .skip(skip)
+      .limit(limit);
 
-    // Get total number of pages matching the conditions
-    total = await Slug.countDocuments(queryConditions);
+    const total = await Slug.countDocuments(queryConditions);
 
-    // If no pages are found, respond with the default "This is parent page"
     if (pages.length === 0) {
       return res.status(200).json({
         status: true,
         message: "No pages found, default value returned.",
         data: {
-          pages: [{ name: "This is main page", page_id: 0 }], // Default value with null `reportId`
-          total: 1, // 1 because we're providing the default option
+          pages: [{ name: "This is main page", page_id: 0 }],
+          total: 1,
           page,
           limit,
         },
       });
     }
 
-    // Otherwise, return the pages found with `name` and `reportId`
-    res.status(200).json({
+    return res.status(200).json({
       status: true,
       message: "Pages fetched successfully",
       data: {
-        pages: [{ name: "This is main page", page_id: 0 }, ...pages], // The actual list of pages (name and reportId)
-        total, // Total pages matching the conditions
-        page, // Current page
-        limit, // Results per page
+        pages: [{ name: "This is main page", page_id: 0 }, ...pages],
+        total,
+        page,
+        limit,
       },
     });
+
   } catch (error) {
-    console.error(error);
+    console.error("Error in getParent:", error);
     res.status(500).json({
       status: false,
       message: "Server error",
