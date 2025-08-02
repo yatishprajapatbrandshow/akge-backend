@@ -1,4 +1,4 @@
-const { Slug, ExtraParamsData } = require("../models");
+const { Slug, ExtraParamsData, PageData } = require("../models");
 const imagePath = "https://csip-image.blr1.digitaloceanspaces.com/csip-image"
 const generateUniqueId = async (existingIds) => {
   let id;
@@ -558,7 +558,7 @@ const getBySlug = async (req, res) => {
       return res.status(404).json({
         status: false,
         data: false,
-        message: 'Page not found with this path : '+path,
+        message: 'Page not found with this path : ' + path,
       });
     }
 
@@ -572,7 +572,7 @@ const getBySlug = async (req, res) => {
     })
       .select('param paramDesc paramImg paramUrl orderSequence holder type widgetType extraData pdfs subparam params')
       .lean();
-
+    const pageData = PageData.find({ pageid: data?.page_id, status: true, deleteflag: false }).select('key value')
     // Normalize and transform array to object
     const formattedExtraParams = extraParamsData.reduce((acc, item) => {
       const normalizedKey = item.holder.toLowerCase().replace(/\s+/g, '');
@@ -587,7 +587,8 @@ const getBySlug = async (req, res) => {
       ...data,
       extraComponentData: formattedExtraParams || false,
       breadCrumb: breadcrumb || false,
-      banner_img: imagePath + data?.banner_img
+      banner_img: imagePath + data?.banner_img,
+      pageData
     };
 
     return res.status(200).json({
