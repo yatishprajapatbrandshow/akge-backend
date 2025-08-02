@@ -293,11 +293,6 @@ const slugSchema = new mongoose.Schema({
         type: String,
         required: false
     },
-    stream: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'School', // Name of the referenced model,
-        default: null
-    },
     status: {
         type: Boolean,
         default: true
