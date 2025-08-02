@@ -88,6 +88,7 @@ const update = async (req, res) => {
       deleteflag = false,
       editedby = "Admin",
       ComponentType,
+      stream,
       mainReportImage,
       downloadCenterPdf,
       galleryimg = []
@@ -229,6 +230,7 @@ const update = async (req, res) => {
         editedby,
         deleteflag,
         ComponentType,
+        stream,
         mainReportImage,
         downloadCenterPdf,
         galleryimg
@@ -541,7 +543,7 @@ const getBySlug = async (req, res) => {
       path = '/' + path;
     }
 
-    const data = await Slug.findOne({ path, deleteflag: false, status: true }).lean()
+    const data = await Slug.findOne({ path, deleteflag: false, status: true }).lean();
     if (!data) {
       return res.status(404).json({
         status: false,
