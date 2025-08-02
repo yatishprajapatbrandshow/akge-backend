@@ -35,28 +35,26 @@ const uploadfile = async (req, res) => {
     for (const file of files) {
       const filePath = file.path;
       const fileName = file.originalname;
-      const fileMimeType = file.mimetype;
 
       // Prepare S3 upload parameters
-      const key = `${fileName}`;
+      const key = `akg/${fileName}`;
       const fileBuffer = fs.readFileSync(filePath); // Read file as a buffer
 
       const uploadParams = {
         Bucket: bucket,
         Key: key,
         Body: fileBuffer,
-        ContentType: fileMimeType,
+        ContentType: file.mimetype,
         ACL: "public-read", // File will be publicly accessible
       };
 
       // Upload file to DigitalOcean Spaces
-      const result = await s3Client.send(new PutObjectCommand(uploadParams));
+      await s3Client.send(new PutObjectCommand(uploadParams));
 
       const fileUrl = `https://csip-image.blr1.digitaloceanspaces.com/${key}`;
-      const finalUrl = fileUrl.replace(/([^:]\/)\/+/g, "$1"); // Clean URL
 
       // Add the file URL to the response array
-      uploadedFiles.push(finalUrl);
+      uploadedFiles.push(fileUrl);
 
       // Delete the temporary file from "uploads"
       fs.unlink(filePath, (err) => {
