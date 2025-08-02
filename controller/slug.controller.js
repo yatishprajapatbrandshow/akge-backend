@@ -365,7 +365,7 @@ const getParent = async (req, res) => {
       }
     }
 
-    const pages = await Slug.find(queryConditions, { name: 1, page_id: 1 })
+    const pages = await Slug.find(queryConditions, { name: 1, page_id: 1,type:1 })
       .skip(skip)
       .limit(limit);
 
@@ -609,7 +609,6 @@ const getBySlug = async (req, res) => {
     });
   }
 };
-
 
 module.exports = {
   // insert,
