@@ -17,6 +17,7 @@ const dashboardRouter = require("./Dashboard.router");
 const widgetRouter = require('./widget.router')
 const applicationRouter = require('./application.router')
 const pageDataRouter=require('./pageData.router')
+const faqRouter = require("./faq.router");
 
 module.exports = {
   adminRouter,
@@ -37,5 +38,6 @@ module.exports = {
   dashboardRouter,
   widgetRouter,
   applicationRouter,
-  pageDataRouter
+  pageDataRouter ,
+  faqRouter
 };
