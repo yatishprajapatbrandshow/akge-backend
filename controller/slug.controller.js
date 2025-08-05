@@ -365,7 +365,7 @@ const getParent = async (req, res) => {
       }
     }
 
-    const pages = await Slug.find(queryConditions, { name: 1, page_id: 1,type:1 })
+    const pages = await Slug.find(queryConditions, { name: 1, page_id: 1, type: 1 })
       .skip(skip)
       .limit(limit);
 
@@ -552,6 +552,16 @@ const getBySlug = async (req, res) => {
       });
     }
 
+    let faculties = [];
+
+    if (data.type === "School") {
+      faculties = await Slug.find({ tag1: data.name, type: "Faculty", deleteflag: false, status: true }).lean();
+    } else if (data.type === "Department") {
+      faculties = await Slug.find({ tag2: data.name, type: "Faculty", deleteflag: false, status: true }).lean();
+    } else if (data.type === "Program") {
+      faculties = await Slug.find({ tag3: data.name, type: "Faculty", deleteflag: false, status: true }).lean();
+    }
+
     // Get breadcrumb
     const breadcrumb = await buildBreadcrumb(data);
     // Get extra component data
@@ -591,7 +601,8 @@ const getBySlug = async (req, res) => {
       extraComponentData: formattedExtraParams || false,
       breadCrumb: breadcrumb || false,
       banner_img: imagePath + data?.banner_img,
-      pageData
+      pageData,
+      faculties: faculties.length > 0 ? faculties : false
     };
 
     return res.status(200).json({
