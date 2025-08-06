@@ -18,7 +18,8 @@ const {
   widgetRouter,
   applicationRouter,
   pageDataRouter ,
-  faqRouter
+  faqRouter ,
+  reviewRouter
 
 } = require("./routes");
 const { userAuth } = require("./middlewares/auth");
@@ -132,6 +133,9 @@ app.use("/api/page-params", pageDataRouter);
 
 // FAQ Router
 app.use("/api/faq", faqRouter);
+
+// Review Router
+app.use("/api/review", reviewRouter);
 
 // Start the server
 app.listen(PORT || 3000, () => {

@@ -12,6 +12,7 @@ const ExtraParamsData = require('./ExtraParamsData.model')
 const Application = require('./application.model')
 const PageData = require('./pageData.model')
 const Faq = require('./faq.model');
+const Review = require('./review.model');
 
 
 module.exports = {
@@ -28,5 +29,6 @@ module.exports = {
   ExtraParamsData,
   Application,
   PageData ,
-  Faq
+  Faq ,
+  Review
 };

@@ -18,6 +18,7 @@ const widgetController = require('./widget.controller')
 const applicationController = require('./application.controller')
 const pageDataController =require('./pageData.controller')
 const faqController = require("./faq.controller");
+const reviewController = require("./review.controller");
 
 
 module.exports = {
@@ -40,5 +41,6 @@ module.exports = {
   widgetController,
   applicationController,
   pageDataController ,
-  faqController
+  faqController ,
+  reviewController
 };
