@@ -8,21 +8,16 @@ const faqSchema = new mongoose.Schema(
       required: true,
       trim: true
     },
-  
-    questions: [
-      {
-        question: {
-          type: String,
-          required: true,
-          trim: true
-        },
-        answer: {
-          type: String,
-          required: true,
-          trim: true
-        }
-      }
-    ],
+    question: {  // Single question (not an array)
+      type: String,
+      required: true,
+      trim: true
+    },
+    answer: {    // Single answer (not an array)
+      type: String,
+      required: true,
+      trim: true
+    },
     status: {
       type: Boolean,
       default: true,
