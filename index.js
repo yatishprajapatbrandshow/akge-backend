@@ -19,7 +19,8 @@ const {
   applicationRouter,
   pageDataRouter ,
   faqRouter ,
-  reviewRouter
+  reviewRouter ,
+   testimonialRouter
 
 } = require("./routes");
 const { userAuth } = require("./middlewares/auth");
@@ -136,6 +137,9 @@ app.use("/api/faq", faqRouter);
 
 // Review Router
 app.use("/api/review", reviewRouter);
+
+// Testimonial Router
+app.use("/api/testimonial", testimonialRouter);
 
 // Start the server
 app.listen(PORT || 3000, () => {

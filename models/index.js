@@ -13,6 +13,7 @@ const Application = require('./application.model')
 const PageData = require('./pageData.model')
 const Faq = require('./faq.model');
 const Review = require('./review.model');
+const Testimonial = require('./testimonial.model');
 
 
 module.exports = {
@@ -30,5 +31,6 @@ module.exports = {
   Application,
   PageData ,
   Faq ,
-  Review
+  Review,
+  Testimonial
 };
