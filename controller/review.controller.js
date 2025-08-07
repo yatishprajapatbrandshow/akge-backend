@@ -1,9 +1,9 @@
-const  {Review }= require("../models");
+const { Review } = require("../models");
 
-// Create Review
+// Create Review (with page_id)
 const createReview = async (req, res) => {
   try {
-    const { name, course, company_name, description, image } = req.body;
+    const { name, course, company_name, description, image, page_id } = req.body;
 
     const review = new Review({
       name,
@@ -11,6 +11,7 @@ const createReview = async (req, res) => {
       company_name,
       description,
       image,
+      page_id: page_id || null // Make page_id optional
     });
 
     await review.save();
@@ -20,10 +21,32 @@ const createReview = async (req, res) => {
   }
 };
 
-// Get All Reviews
+// Get All Reviews (with optional page_id filter)
 const getAllReviews = async (req, res) => {
   try {
-    const reviews = await Review.find({ deleteflag: false });
+    const { page_id } = req.query;
+    const filter = { deleteflag: false };
+    
+    if (page_id) {
+      filter.page_id = page_id;
+    }
+
+    const reviews = await Review.find(filter);
+    res.status(200).json({ success: true, data: reviews });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Get Reviews by Page ID
+const getReviewsByPageId = async (req, res) => {
+  try {
+    const { page_id } = req.params;
+    const reviews = await Review.find({ 
+      page_id,
+      deleteflag: false 
+    });
+    
     res.status(200).json({ success: true, data: reviews });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -76,6 +99,7 @@ const deleteReview = async (req, res) => {
 module.exports = {
   createReview,
   getAllReviews,
+  getReviewsByPageId,
   getReviewById,
   updateReview,
   deleteReview,

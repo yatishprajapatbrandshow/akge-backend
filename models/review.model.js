@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const reviewSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
+    page_id :{type :String, required:true},
     course: { type: String, required: true, trim: true },
     company_name: { type: String, required: true, trim: true },
     description: { type: String, required: true, trim: true },
