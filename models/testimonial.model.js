@@ -1,4 +1,3 @@
-// models/testimonial.model.js
 const mongoose = require("mongoose");
 
 const testimonialSchema = new mongoose.Schema(
@@ -10,7 +9,8 @@ const testimonialSchema = new mongoose.Schema(
     company_name: { type: String, required: true, trim: true },
     company_city: { type: String, trim: true },
     company_country: { type: String, trim: true },
-    page_id: { type: String, required: false },
+    page_id: { type: String, required: false }, // Legacy single assignment
+    page_ids: { type: [String], default: [] }, // New array for multiple assignments
     image: { type: String },
     status: { type: Boolean, default: true },
     deleteflag: { type: Boolean, default: false }
