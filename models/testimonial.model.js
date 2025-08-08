@@ -9,7 +9,7 @@ const testimonialSchema = new mongoose.Schema(
     company_name: { type: String, required: true, trim: true },
     company_city: { type: String, trim: true },
     company_country: { type: String, trim: true },
-    page_id: { type: String, required: false }, 
+    page_ids: { type: [String], default: [] }, // Changed to array of strings
     image: { type: String },
     status: { type: Boolean, default: true },
     deleteflag: { type: Boolean, default: false }

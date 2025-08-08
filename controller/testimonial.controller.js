@@ -1,10 +1,10 @@
 // controllers/testimonial.controller.js
 const { Testimonial } = require("../models");
 
-// Create Testimonial (with page_id)
+// Create Testimonial (with page_ids)
 const createTestimonial = async (req, res) => {
   try {
-    const { name, rating, position, description, company_name, company_city, company_country, image, page_id } = req.body;
+    const { name, rating, position, description, company_name, company_city, company_country, image, page_ids } = req.body;
 
     const testimonial = new Testimonial({
       name,
@@ -15,7 +15,7 @@ const createTestimonial = async (req, res) => {
       company_city,
       company_country,
       image,
-      page_id: page_id || null // Make page_id optional
+      page_ids: page_ids || [] // Make page_ids optional, default to empty array
     });
 
     await testimonial.save();
@@ -24,7 +24,6 @@ const createTestimonial = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
-
 // Get All Testimonials (with optional page_id filter)
 const getAllTestimonials = async (req, res) => {
   try {
@@ -42,12 +41,11 @@ const getAllTestimonials = async (req, res) => {
   }
 };
 
-// Get Testimonials by Page ID
 const getTestimonialsByPageId = async (req, res) => {
   try {
     const { page_id } = req.params;
     const testimonials = await Testimonial.find({ 
-      page_id,
+      page_ids: page_id, // Now checking if page_id exists in page_ids array
       deleteflag: false 
     });
     
@@ -85,21 +83,34 @@ const updateTestimonial = async (req, res) => {
       });
     }
 
-    // If testimonial already has a page_id, prevent changing it
-    if (currentTestimonial.page_id && updateData.page_id && 
-        currentTestimonial.page_id.toString() !== updateData.page_id.toString()) {
-      return res.status(400).json({ 
-        success: false, 
-        message: "Cannot change page_id once it's set for a testimonial" 
-      });
-    }
+    // Handle page_ids update
+    if (updateData.page_ids) {
+      // Convert both to Sets for easy comparison
+      const currentPageIds = new Set(currentTestimonial.page_ids.map(id => id.toString()));
+      const newPageIds = new Set(updateData.page_ids.map(id => id.toString()));
 
-    // If the testimonial had no page_id and one is being set, allow it
-    // Otherwise, remove page_id from update data to prevent changes
-    if (!currentTestimonial.page_id && updateData.page_id) {
-      // Allow setting page_id for the first time
+      // Check if we're trying to remove any existing page_ids (not allowed)
+      for (const id of currentPageIds) {
+        if (!newPageIds.has(id)) {
+          return res.status(400).json({
+            success: false,
+            message: "Cannot remove existing page_ids, only additions are allowed"
+          });
+        }
+      }
+
+      // Merge existing and new page_ids, avoiding duplicates
+      const mergedPageIds = [...currentTestimonial.page_ids];
+      for (const newId of updateData.page_ids) {
+        if (!currentPageIds.has(newId.toString())) {
+          mergedPageIds.push(newId);
+        }
+      }
+
+      updateData.page_ids = mergedPageIds;
     } else {
-      delete updateData.page_id; // Remove page_id from update to prevent changes
+      // Remove page_ids from update if not provided to prevent accidental removal
+      delete updateData.page_ids;
     }
 
     const testimonial = await Testimonial.findByIdAndUpdate(
