@@ -21,6 +21,8 @@ router.get('/:id', testimonialController.getTestimonialById);
 // Update a testimonial
 router.put('/:id', testimonialController.updateTestimonial);
 
+router.post('/add-to-page', testimonialController.addTestimonialToPage);
+
 // Delete a testimonial
 router.delete('/:id', testimonialController.deleteTestimonial);
 
