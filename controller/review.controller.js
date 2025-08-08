@@ -11,7 +11,7 @@ const createReview = async (req, res) => {
       company_name,
       description,
       image,
-      page_id: page_id || null // Make page_id optional
+      page_id: page_id || null 
     });
 
     await review.save();
@@ -69,10 +69,33 @@ const getReviewById = async (req, res) => {
 // Update Review
 const updateReview = async (req, res) => {
   try {
-    const review = await Review.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!review) {
+    const { id } = req.params;
+    const updateData = { ...req.body };
+    
+    // First get the current review
+    const currentReview = await Review.findById(id);
+    if (!currentReview) {
       return res.status(404).json({ success: false, message: "Review not found" });
     }
+
+    // If the review already has a page_id, prevent changing it
+    if (currentReview.page_id && updateData.page_id && 
+        currentReview.page_id.toString() !== updateData.page_id.toString()) {
+      return res.status(400).json({ 
+        success: false, 
+        message: "Cannot change page_id once it's set for a review" 
+      });
+    }
+
+    // If the review had no page_id and one is being set, allow it
+    // Otherwise, remove page_id from update data to prevent changes
+    if (!currentReview.page_id && updateData.page_id) {
+      // Allow setting page_id for the first time
+    } else {
+      delete updateData.page_id; // Remove page_id from update to prevent changes
+    }
+
+    const review = await Review.findByIdAndUpdate(id, updateData, { new: true });
     res.status(200).json({ success: true, message: "Review updated", data: review });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
