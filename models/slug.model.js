@@ -16,6 +16,7 @@ const slugSchema = new mongoose.Schema({
         required: false,
         default: 0,
     },
+
     languageId: {
         type: Number,
         required: false,
@@ -279,6 +280,7 @@ const slugSchema = new mongoose.Schema({
         type: String,
         required: false
     },
+    qualification: [String], 
     path: {
         type: String,
         required: true,

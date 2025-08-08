@@ -91,7 +91,8 @@ const update = async (req, res) => {
       stream,
       mainReportImage,
       downloadCenterPdf,
-      galleryimg = []
+      galleryimg = [],
+      qualification = [] // Add this line to destructure qualification from req.body
     } = req.body;
 
     // Validate required fields
@@ -233,7 +234,8 @@ const update = async (req, res) => {
         stream,
         mainReportImage,
         downloadCenterPdf,
-        galleryimg
+        galleryimg,
+        qualification // Add this line to include qualification in the update
       },
       { new: true } // Return the updated document
     );
