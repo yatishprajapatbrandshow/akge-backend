@@ -14,20 +14,19 @@ const facultySchema = new mongoose.Schema(
     department: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Department", // Reference to the Department model
-        // required: true, // Ensures at least one department is assigned
+        ref: "Department", 
       },
     ],
     school: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "School", // Reference to the School model
-        // required: true, // Ensures at least one School is assigned
+        ref: "School", 
       },
     ],
-    subjectsTaught: [String], // List of subjects taught by the faculty
-    profilePicture: String, // URL or path to faculty profile picture
-    socialLinks: [], // Array to hold social media links
+    subjectsTaught: [String],
+    qualification: [String], 
+    profilePicture: String,
+    socialLinks: [],
     status: {
       type: Boolean,
       default: true,
