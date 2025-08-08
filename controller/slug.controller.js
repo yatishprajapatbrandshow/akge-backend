@@ -1,4 +1,4 @@
-const { Slug, ExtraParamsData, PageData, Review } = require("../models");
+const { Slug, ExtraParamsData, PageData, Review, Faq } = require("../models");
 const imagePath = "https://csip-image.blr1.digitaloceanspaces.com/csip-image"
 const generateUniqueId = async (existingIds) => {
   let id;
@@ -543,7 +543,9 @@ const getBySlug = async (req, res) => {
       path = '/' + path;
     }
 
-    const data = await Slug.findOne({ path, deleteflag: false, status: true }).lean();
+    const selectedFields = "ComponentType addedon banner_img breadCrumb date createdAt description downloadCenterPdf extraComponentData faculties faq featured_img galleryimg highlightBanner mainReportImage metadesc metatitle name pageData page_id path slug shortdesc parent_id status stream studentReviews tag1 tag2 tag3 type video_url"
+
+    const data = await Slug.findOne({ path, deleteflag: false, status: true }).lean().select(selectedFields);
     if (!data) {
       return res.status(404).json({
         status: false,
@@ -555,14 +557,16 @@ const getBySlug = async (req, res) => {
     
     const studentReviews = await Review.find({ page_id: data?.page_id, deleteflag: false, status: true }).lean();
 
+    const faq = await Faq.find({page_id: data?.page_id, deleteflag: false, status: true}).lean().select("question answer");
+
     let faculties = [];
 
     if (data.type === "School") {
-      faculties = await Slug.find({ tag1: data.name, type: "Faculty", deleteflag: false, status: true }).lean();
+      faculties = await Slug.find({ tag1: data.name, type: "Faculty", deleteflag: false, status: true }).lean().select("name banner_img param5 path");
     } else if (data.type === "Department") {
-      faculties = await Slug.find({ tag2: data.name, type: "Faculty", deleteflag: false, status: true }).lean();
+      faculties = await Slug.find({ tag2: data.name, type: "Faculty", deleteflag: false, status: true }).lean().select("name banner_img param5 path");
     } else if (data.type === "Program") {
-      faculties = await Slug.find({ tag3: data.name, type: "Faculty", deleteflag: false, status: true }).lean();
+      faculties = await Slug.find({ tag3: data.name, type: "Faculty", deleteflag: false, status: true }).lean().select("name banner_img param5 path");
     }
 
     // Get breadcrumb
@@ -606,7 +610,8 @@ const getBySlug = async (req, res) => {
       banner_img: imagePath + data?.banner_img,
       pageData,
       faculties: faculties.length > 0 ? faculties : false,
-      studentReviews: studentReviews.length > 0 ? studentReviews : false
+      studentReviews: studentReviews.length > 0 ? studentReviews : false,
+      faq: faq.length > 0 ? faq : false
     };
 
     return res.status(200).json({
