@@ -45,13 +45,20 @@ const getAllReviews = async (req, res) => {
   }
 };
 
-// Get Reviews by Page ID
+// Get Reviews by Page ID (updated version)
 const getReviewsByPageId = async (req, res) => {
   try {
     const { page_id } = req.params;
-    const reviews = await Review.find({ 
-      page_id,
-      deleteflag: false 
+    
+    // Find reviews where either:
+    // 1. page_id matches exactly (legacy)
+    // 2. page_ids array contains the page_id (new)
+    const reviews = await Review.find({
+      $or: [
+        { page_id: page_id },
+        { page_ids: page_id }
+      ],
+      deleteflag: false
     });
     
     res.status(200).json({ success: true, data: reviews });
@@ -59,7 +66,6 @@ const getReviewsByPageId = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
-
 // Get Single Review
 const getReviewById = async (req, res) => {
   try {
