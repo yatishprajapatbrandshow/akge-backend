@@ -1,4 +1,4 @@
-const { Slug, ExtraParamsData, PageData, Review, Faq } = require("../models");
+const { Slug, ExtraParamsData, PageData, Review, Faq, Testimonial } = require("../models");
 const imagePath = "https://csip-image.blr1.digitaloceanspaces.com/csip-image"
 const generateUniqueId = async (existingIds) => {
   let id;
@@ -545,7 +545,7 @@ const getBySlug = async (req, res) => {
       path = '/' + path;
     }
 
-    const selectedFields = "ComponentType addedon banner_img breadCrumb date createdAt description downloadCenterPdf extraComponentData faculties faq featured_img galleryimg highlightBanner mainReportImage metadesc metatitle name pageData page_id path slug shortdesc parent_id status stream studentReviews tag1 tag2 tag3 type video_url"
+    const selectedFields = "ComponentType addedon banner_img breadCrumb date createdAt description downloadCenterPdf extraComponentData faculties faq featured_img galleryimg highlightBanner mainReportImage metadesc metatitle name pageData page_id path slug shortdesc parent_id status stream studentReviews tag1 tag2 tag3 type video_url testimonials"
 
     const data = await Slug.findOne({ path, deleteflag: false, status: true }).lean().select(selectedFields);
     if (!data) {
@@ -556,6 +556,7 @@ const getBySlug = async (req, res) => {
       });
     }
 
+    const testimonials = await Testimonial.find({page_id: data?.page_id, deleteflag: false, status: true}).lean();
     
     const studentReviews = await Review.find({ page_id: data?.page_id, deleteflag: false, status: true }).lean();
 
@@ -613,7 +614,8 @@ const getBySlug = async (req, res) => {
       pageData,
       faculties: faculties.length > 0 ? faculties : false,
       studentReviews: studentReviews.length > 0 ? studentReviews : false,
-      faq: faq.length > 0 ? faq : false
+      faq: faq.length > 0 ? faq : false,
+      testimonials: testimonials.length > 0 ? testimonials : false
     };
 
     return res.status(200).json({
