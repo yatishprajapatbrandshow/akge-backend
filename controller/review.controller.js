@@ -11,13 +11,20 @@ const createReview = async (req, res) => {
       company_name,
       description,
       image,
-      page_id: page_id || null 
+      page_ids: page_id ? [page_id] : [], // Initialize as array
     });
 
     await review.save();
-    res.status(201).json({ success: true, message: "Review created", data: review });
+    res.status(201).json({ 
+      success: true, 
+      message: "Review created", 
+      data: review 
+    });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({ 
+      success: false, 
+      message: error.message 
+    });
   }
 };
 
@@ -70,35 +77,68 @@ const getReviewById = async (req, res) => {
 const updateReview = async (req, res) => {
   try {
     const { id } = req.params;
-    const updateData = { ...req.body };
+    const { page_id, ...otherUpdates } = req.body;
     
     // First get the current review
     const currentReview = await Review.findById(id);
     if (!currentReview) {
-      return res.status(404).json({ success: false, message: "Review not found" });
-    }
-
-    // If the review already has a page_id, prevent changing it
-    if (currentReview.page_id && updateData.page_id && 
-        currentReview.page_id.toString() !== updateData.page_id.toString()) {
-      return res.status(400).json({ 
+      return res.status(404).json({ 
         success: false, 
-        message: "Cannot change page_id once it's set for a review" 
+        message: "Review not found" 
       });
     }
 
-    // If the review had no page_id and one is being set, allow it
-    // Otherwise, remove page_id from update data to prevent changes
-    if (!currentReview.page_id && updateData.page_id) {
-      // Allow setting page_id for the first time
+    // If a new page_id is being added
+    if (page_id) {
+      // Convert to string for comparison
+      const pageIdStr = page_id.toString();
+      
+      // Check if this page_id already exists
+      const exists = currentReview.page_ids.some(id => id.toString() === pageIdStr);
+      
+      if (!exists) {
+        // Add to array if not already present
+        await Review.findByIdAndUpdate(
+          id,
+          { 
+            $addToSet: { page_ids: page_id }, // Safely add to array
+            $set: { 
+              ...otherUpdates,
+              // Update single page_id only if array was empty
+              page_id: currentReview.page_ids.length === 0 ? page_id : currentReview.page_id
+            }
+          },
+          { new: true }
+        );
+      } else {
+        // Just update other fields if page_id already exists
+        await Review.findByIdAndUpdate(
+          id,
+          { $set: otherUpdates },
+          { new: true }
+        );
+      }
     } else {
-      delete updateData.page_id; // Remove page_id from update to prevent changes
+      // Update only other fields if no page_id provided
+      await Review.findByIdAndUpdate(
+        id,
+        { $set: otherUpdates },
+        { new: true }
+      );
     }
 
-    const review = await Review.findByIdAndUpdate(id, updateData, { new: true });
-    res.status(200).json({ success: true, message: "Review updated", data: review });
+    const updatedReview = await Review.findById(id);
+    
+    res.status(200).json({ 
+      success: true, 
+      message: "Review updated", 
+      data: updatedReview 
+    });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({ 
+      success: false, 
+      message: error.message 
+    });
   }
 };
 

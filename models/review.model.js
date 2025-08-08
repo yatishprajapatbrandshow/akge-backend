@@ -4,7 +4,11 @@ const mongoose = require("mongoose");
 const reviewSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
-    page_id :{type :String, required:false},
+     page_ids: { 
+      type: [String],  
+      required: false,
+      default: []      
+    },
     course: { type: String, required: true, trim: true },
     company_name: { type: String, required: true, trim: true },
     description: { type: String, required: true, trim: true },
