@@ -1,4 +1,4 @@
-const { Slug, ExtraParamsData, PageData, Review } = require("../models");
+const { Slug, ExtraParamsData, PageData, Review, Faq } = require("../models");
 const imagePath = "https://csip-image.blr1.digitaloceanspaces.com/csip-image"
 const generateUniqueId = async (existingIds) => {
   let id;
@@ -555,6 +555,8 @@ const getBySlug = async (req, res) => {
     
     const studentReviews = await Review.find({ page_id: data?.page_id, deleteflag: false, status: true }).lean();
 
+    const faq = await Faq.find({page_id: data?.page_id, deleteflag: false, status: true}).lean();
+
     let faculties = [];
 
     if (data.type === "School") {
@@ -606,7 +608,8 @@ const getBySlug = async (req, res) => {
       banner_img: imagePath + data?.banner_img,
       pageData,
       faculties: faculties.length > 0 ? faculties : false,
-      studentReviews: studentReviews.length > 0 ? studentReviews : false
+      studentReviews: studentReviews.length > 0 ? studentReviews : false,
+      faq: faq.length > 0 ? faq : false
     };
 
     return res.status(200).json({
