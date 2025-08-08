@@ -15,8 +15,7 @@ const createTestimonial = async (req, res) => {
       company_city,
       company_country,
       image,
-      page_id: page_id || null, // Legacy single assignment
-      page_ids: page_id ? [page_id] : [] // New array assignment
+      page_id: page_id || null // Make page_id optional
     });
 
     await testimonial.save();
@@ -33,10 +32,7 @@ const getAllTestimonials = async (req, res) => {
     const filter = { deleteflag: false };
     
     if (page_id) {
-      filter.$or = [
-        { page_id: page_id },
-        { page_ids: page_id }
-      ];
+      filter.page_id = page_id;
     }
 
     const testimonials = await Testimonial.find(filter);
@@ -45,20 +41,14 @@ const getAllTestimonials = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
 // Get Testimonials by Page ID
 const getTestimonialsByPageId = async (req, res) => {
   try {
     const { page_id } = req.params;
-    
-    // Find testimonials where either:
-    // 1. page_id matches exactly (legacy)
-    // 2. page_ids array contains the page_id (new)
-    const testimonials = await Testimonial.find({
-      $or: [
-        { page_id: page_id },
-        { page_ids: page_id }
-      ],
-      deleteflag: false
+    const testimonials = await Testimonial.find({ 
+      page_id,
+      deleteflag: false 
     });
     
     res.status(200).json({ success: true, data: testimonials });
@@ -66,7 +56,6 @@ const getTestimonialsByPageId = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
-
 
 // Get Single Testimonial
 const getTestimonialById = async (req, res) => {
@@ -85,8 +74,8 @@ const getTestimonialById = async (req, res) => {
 const updateTestimonial = async (req, res) => {
   try {
     const { id } = req.params;
-    const { page_id, ...otherUpdates } = req.body;
-    
+    const updateData = { ...req.body };
+
     // First get the current testimonial
     const currentTestimonial = await Testimonial.findById(id);
     if (!currentTestimonial) {
@@ -96,51 +85,33 @@ const updateTestimonial = async (req, res) => {
       });
     }
 
-    // If a new page_id is being added
-    if (page_id) {
-      // Convert to string for comparison
-      const pageIdStr = page_id.toString();
-      
-      // Check if this page_id already exists
-      const exists = currentTestimonial.page_ids.some(id => id.toString() === pageIdStr);
-      
-      if (!exists) {
-        // Add to array if not already present
-        await Testimonial.findByIdAndUpdate(
-          id,
-          { 
-            $addToSet: { page_ids: page_id }, // Safely add to array
-            $set: { 
-              ...otherUpdates,
-              // Update single page_id only if array was empty
-              page_id: currentTestimonial.page_ids.length === 0 ? page_id : currentTestimonial.page_id
-            }
-          },
-          { new: true }
-        );
-      } else {
-        // Just update other fields if page_id already exists
-        await Testimonial.findByIdAndUpdate(
-          id,
-          { $set: otherUpdates },
-          { new: true }
-        );
-      }
-    } else {
-      // Update only other fields if no page_id provided
-      await Testimonial.findByIdAndUpdate(
-        id,
-        { $set: otherUpdates },
-        { new: true }
-      );
+    // If testimonial already has a page_id, prevent changing it
+    if (currentTestimonial.page_id && updateData.page_id && 
+        currentTestimonial.page_id.toString() !== updateData.page_id.toString()) {
+      return res.status(400).json({ 
+        success: false, 
+        message: "Cannot change page_id once it's set for a testimonial" 
+      });
     }
 
-    const updatedTestimonial = await Testimonial.findById(id);
+    // If the testimonial had no page_id and one is being set, allow it
+    // Otherwise, remove page_id from update data to prevent changes
+    if (!currentTestimonial.page_id && updateData.page_id) {
+      // Allow setting page_id for the first time
+    } else {
+      delete updateData.page_id; // Remove page_id from update to prevent changes
+    }
+
+    const testimonial = await Testimonial.findByIdAndUpdate(
+      id,
+      updateData,
+      { new: true }
+    );
     
     res.status(200).json({ 
       success: true, 
       message: "Testimonial updated", 
-      data: updatedTestimonial 
+      data: testimonial 
     });
   } catch (error) {
     res.status(500).json({ 
@@ -149,7 +120,6 @@ const updateTestimonial = async (req, res) => {
     });
   }
 };
-
 
 // Soft Delete Testimonial
 const deleteTestimonial = async (req, res) => {
