@@ -556,7 +556,7 @@ const getBySlug = async (req, res) => {
       });
     }
 
-    const testimonials = await Testimonial.find({page_id: data?.page_id, deleteflag: false, status: true}).lean();
+    const testimonials = await Testimonial.find({page_id: data?.page_id, deleteflag: false, status: true}).lean().select(" -deleteflag -createdAt -status -updatedAt");
     
     const studentReviews = await Review.find({ page_id: data?.page_id, deleteflag: false, status: true }).lean();
 
