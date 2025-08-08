@@ -555,12 +555,21 @@ const getBySlug = async (req, res) => {
         message: 'Page not found with this path : ' + path,
       });
     }
+    const studentReviews = await Review.aggregate([
+      {
+        $match: {
+          deleteflag: false,
+          status: true,
+          $expr: {
+            $in: [data.page_id.toString(), "$page_ids"]
+          }
+        }
+      }
+    ]);
 
-    const testimonials = await Testimonial.find({page_id: data?.page_id, deleteflag: false, status: true}).lean().select(" -deleteflag -createdAt -status -updatedAt");
-    
-    const studentReviews = await Review.find({ page_id: data?.page_id, deleteflag: false, status: true }).lean();
+    const testimonials = await Testimonial.find({ page_id: data?.page_id, deleteflag: false, status: true }).lean().select(" -deleteflag -createdAt -status -updatedAt");
 
-    const faq = await Faq.find({page_id: data?.page_id, deleteflag: false, status: true}).lean().select("question answer");
+    const faq = await Faq.find({ page_id: data?.page_id, deleteflag: false, status: true }).lean().select("question answer");
 
     let faculties = [];
 
