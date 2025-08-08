@@ -604,11 +604,11 @@ const getBySlug = async (req, res) => {
     let faculties = [];
 
     if (data.type === "School") {
-      faculties = await Slug.find({ tag1: data.name, type: "Faculty", deleteflag: false, status: true }).lean().select("name banner_img param5 path");
+      faculties = await Slug.find({ tag1: data.name, type: "Faculty", deleteflag: false, status: true }).lean().select("name banner_img param5 param9 path");
     } else if (data.type === "Department") {
-      faculties = await Slug.find({ tag2: data.name, type: "Faculty", deleteflag: false, status: true }).lean().select("name banner_img param5 path");
+      faculties = await Slug.find({ tag2: data.name, type: "Faculty", deleteflag: false, status: true }).lean().select("name banner_img param5 param9 path");
     } else if (data.type === "Program") {
-      faculties = await Slug.find({ tag3: data.name, type: "Faculty", deleteflag: false, status: true }).lean().select("name banner_img param5 path");
+      faculties = await Slug.find({ tag3: data.name, type: "Faculty", deleteflag: false, status: true }).lean().select("name banner_img param5 param9 path");
     }
 
     // Get breadcrumb
