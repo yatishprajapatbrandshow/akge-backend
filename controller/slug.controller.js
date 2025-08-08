@@ -564,10 +564,40 @@ const getBySlug = async (req, res) => {
             $in: [data.page_id.toString(), "$page_ids"]
           }
         }
+      },
+      {
+        $project: {
+          deleteflag: 0,
+          createdAt: 0,
+          status: 0,
+          updatedAt: 0,
+          page_ids: 0,
+          __v: 0
+        }
       }
     ]);
 
-    const testimonials = await Testimonial.find({ page_id: data?.page_id, deleteflag: false, status: true }).lean().select(" -deleteflag -createdAt -status -updatedAt");
+    const testimonials = await Testimonial.aggregate([
+      {
+        $match: {
+          deleteflag: false,
+          status: true,
+          $expr: {
+            $in: [data.page_id.toString(), "$page_ids"]
+          }
+        }
+      },
+      {
+        $project: {
+          deleteflag: 0,
+          createdAt: 0,
+          status: 0,
+          updatedAt: 0,
+          page_ids: 0,
+          __v: 0
+        }
+      }
+    ]);
 
     const faq = await Faq.find({ page_id: data?.page_id, deleteflag: false, status: true }).lean().select("question answer");
 
