@@ -11,6 +11,7 @@ const create = async (req, res) => {
       school,
       department, 
       subjectsTaught,
+      qualification,
       profilePicture,
       socialLinks,
     } = req.body;
@@ -22,8 +23,8 @@ const create = async (req, res) => {
       !subjectsTaught ||
       !designation ||
       !school ||
-      !Array.isArray(department) || // Ensure department is an array
-      department.length === 0 // At least one department should be selected
+      !Array.isArray(department) ||
+      department.length === 0
     ) {
       return res.status(400).json({
         status: false,
@@ -72,6 +73,7 @@ const create = async (req, res) => {
       school,
       department,
       subjectsTaught,
+      qualification, // नया field जोड़ा गया
       profilePicture,
       socialLinks,
       status: true,
@@ -102,6 +104,7 @@ const create = async (req, res) => {
     });
   }
 };
+
 const update = async (req, res) => {
   try {
     const {
@@ -113,6 +116,7 @@ const update = async (req, res) => {
       designation,
       departments, 
       subjectsTaught,
+      qualification, 
       profilePicture,
       socialLinks,
     } = req.body;
@@ -202,6 +206,7 @@ const update = async (req, res) => {
         school,
         department: departments,
         subjectsTaught,
+        qualification, // नया field जोड़ा गया
         profilePicture,
         socialLinks,
       },
@@ -252,6 +257,7 @@ const getAll = async (req, res) => {
     });
   }
 };
+
 const findById = async (req, res) => {
   try {
     const { _id } = req.query;
@@ -288,6 +294,7 @@ const findById = async (req, res) => {
     });
   }
 };
+
 const getByDepartment = async (req, res) => {z
   try {
     const { department } = req.query;
@@ -325,6 +332,7 @@ const getByDepartment = async (req, res) => {z
     });
   }
 };
+
 const search = async (req, res) => {
   try {
     const { search } = req.query;
@@ -335,6 +343,7 @@ const search = async (req, res) => {
         { email: { $regex: search, $options: "i" } },
         { designation: { $regex: search, $options: "i" } },
         { subjectsTaught: { $regex: search, $options: "i" } },
+        { qualification: { $regex: search, $options: "i" } }, // नया field जोड़ा गया
         { socialLinks: { $regex: search, $options: "i" } },
       ],
       deleteflag: false,
@@ -362,6 +371,7 @@ const search = async (req, res) => {
     });
   }
 };
+
 const deleteFaculty = async (req, res) => {
   try {
     const { _id } = req.query;
