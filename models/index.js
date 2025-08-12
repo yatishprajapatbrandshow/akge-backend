@@ -14,6 +14,7 @@ const PageData = require('./pageData.model')
 const Faq = require('./faq.model');
 const Review = require('./review.model');
 const Testimonial = require('./testimonial.model');
+const Download = require('./download.model');
 
 
 module.exports = {
@@ -32,5 +33,6 @@ module.exports = {
   PageData ,
   Faq ,
   Review,
-  Testimonial
+  Testimonial,
+  Download
 };

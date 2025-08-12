@@ -13,14 +13,15 @@ const {
   extraParamsDataRouter,
   editPathRouter,
   newsDetailPageRouter,
-  uploadRouter, 
+  uploadRouter,
   dashboardRouter,
   widgetRouter,
   applicationRouter,
-  pageDataRouter ,
-  faqRouter ,
-  reviewRouter ,
-   testimonialRouter
+  pageDataRouter,
+  faqRouter,
+  reviewRouter,
+  testimonialRouter,
+  downloadRouter
 
 } = require("./routes");
 const { userAuth } = require("./middlewares/auth");
@@ -140,6 +141,8 @@ app.use("/api/review", reviewRouter);
 
 // Testimonial Router
 app.use("/api/testimonial", testimonialRouter);
+
+app.use("/api/downloads", downloadRouter)
 
 // Start the server
 app.listen(PORT || 3000, () => {

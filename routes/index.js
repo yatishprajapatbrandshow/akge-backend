@@ -20,6 +20,7 @@ const pageDataRouter=require('./pageData.router')
 const faqRouter = require("./faq.router");
 const reviewRouter = require("./review.router");
 const testimonialRouter = require("./testimonial.router");
+const downloadRouter = require("./download.router");
 
 module.exports = {
   adminRouter,
@@ -43,5 +44,6 @@ module.exports = {
   pageDataRouter ,
   faqRouter ,
   reviewRouter,
-  testimonialRouter
+  testimonialRouter,
+  downloadRouter
 };
