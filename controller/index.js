@@ -21,6 +21,7 @@ const faqController = require("./faq.controller");
 const reviewController = require("./review.controller");
 const testimonialController = require("./testimonial.controller");
 const downloadController = require("./download.controller");
+const topperController = require("./topper.controller");
 
 
 module.exports = {
@@ -46,5 +47,6 @@ module.exports = {
   faqController ,
   reviewController ,
   testimonialController,
-  downloadController
+  downloadController,
+  topperController
 };

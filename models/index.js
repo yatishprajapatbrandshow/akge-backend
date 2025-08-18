@@ -15,6 +15,7 @@ const Faq = require('./faq.model');
 const Review = require('./review.model');
 const Testimonial = require('./testimonial.model');
 const Download = require('./download.model');
+const Topper = require('./topper.model');
 
 
 module.exports = {
@@ -34,5 +35,6 @@ module.exports = {
   Faq ,
   Review,
   Testimonial,
-  Download
+  Download,
+  Topper
 };
