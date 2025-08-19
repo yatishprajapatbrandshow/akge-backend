@@ -22,6 +22,7 @@ const reviewRouter = require("./review.router");
 const testimonialRouter = require("./testimonial.router");
 const downloadRouter = require("./download.router");
 const topperRouter = require("./topper.router");
+const noticeRouter = require("./notice.router");
 
 module.exports = {
   adminRouter,
@@ -47,5 +48,6 @@ module.exports = {
   reviewRouter,
   testimonialRouter,
   downloadRouter,
-  topperRouter
+  topperRouter,
+  noticeRouter
 };

@@ -22,7 +22,8 @@ const {
   reviewRouter,
   testimonialRouter,
   downloadRouter,
-  topperRouter
+  topperRouter,
+  noticeRouter
 
 } = require("./routes");
 const { userAuth } = require("./middlewares/auth");
@@ -146,6 +147,8 @@ app.use("/api/testimonial", testimonialRouter);
 app.use("/api/downloads", downloadRouter)
 
 app.use("/api/toppers", topperRouter)
+
+app.use("/api/notices", noticeRouter)
 
 // Start the server
 app.listen(PORT || 3000, () => {

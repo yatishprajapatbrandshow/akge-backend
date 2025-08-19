@@ -16,6 +16,7 @@ const Review = require('./review.model');
 const Testimonial = require('./testimonial.model');
 const Download = require('./download.model');
 const Topper = require('./topper.model');
+const Notice = require('./notice.model');
 
 
 module.exports = {
@@ -36,5 +37,6 @@ module.exports = {
   Review,
   Testimonial,
   Download,
-  Topper
+  Topper,
+  Notice
 };
