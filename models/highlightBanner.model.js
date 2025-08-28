@@ -38,9 +38,8 @@ const highlightBannerSchema = new mongoose.Schema(
       default: [],
     },
     stream: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "School",
-      required: false, // optional
+      type: String,
+      required: true,
     },
     status: {
       type: Boolean,

@@ -2,7 +2,6 @@ const {
   adminRouter,
   slugRouter,
   metaRouter,
-  schoolRouter,
   departmentRouter,
   facultyRouter,
   staticPageRouter,
@@ -92,9 +91,6 @@ app.use("/api/meta", userAuth, metaRouter);
 
 //Circular Router
 app.use("/api/circular", userAuth, circularRouter);
-
-// school Router
-app.use("/api/school", userAuth, schoolRouter);
 
 // department Router
 app.use("/api/department", userAuth, departmentRouter);

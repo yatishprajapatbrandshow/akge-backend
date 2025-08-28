@@ -1,4 +1,4 @@
-const { HighlightBanner } = require("../models");
+const { HighlightBanner, Slug } = require("../models");
 
 /**
  * Add a new highlight banner
@@ -17,7 +17,7 @@ const addHighlightBanner = async (req, res) => {
     } = req.body;
 
     // Validate required fields
-    const requiredFields = {  banner, description, link, size, title };
+    const requiredFields = { banner, description, link, size, title };
     for (const [key, value] of Object.entries(requiredFields)) {
       if (!value) {
         return res.status(400).json({
@@ -97,7 +97,7 @@ const updateHighlightBanner = async (req, res) => {
       ...(typeof status === "boolean" && { status }),
       ...(size && { size: size.trim() }),
       ...(title && { title: title.trim() }),
-      ...(bannerAlt && { bannerAlt: bannerAlt.trim() }),  
+      ...(bannerAlt && { bannerAlt: bannerAlt.trim() }),
       ...(stream && { stream }),
       ...(Array.isArray(tags) && { tags }),
     };
@@ -213,7 +213,6 @@ const getHighlightBannerList = async (req, res) => {
     if (status !== undefined && status !== "") {
       query.status = status === "true";
     }
-
     const sortOptions = {};
     sortOptions[sortBy] = sortOrder === "desc" ? -1 : 1;
 
@@ -224,16 +223,36 @@ const getHighlightBannerList = async (req, res) => {
     const totalPages = Math.ceil(totalItems / itemsPerPage);
 
     const banners = await HighlightBanner.find(query)
-      .populate('stream')
       .sort(sortOptions)
       .skip((currentPage - 1) * itemsPerPage)
-      .limit(itemsPerPage);
+      .limit(itemsPerPage)
+      .lean();
+
+    const bannerWithStream = await Promise.all(
+      banners.map(async (banner) => {
+        if (banner.stream) {
+          const streamData = await Slug.findOne({
+            page_id: banner.stream,
+            deleteflag: false,
+            status: true,
+          }).lean().select("name");
+
+          return {
+            ...banner,
+            stream: streamData || null, // replace id with data
+          };
+        }
+        return banner;
+      })
+    );
+
+
 
     return res.status(200).json({
       status: true,
       message: "Highlight banners fetched successfully.",
       data: {
-        banners,
+        banners: bannerWithStream,
         pagination: {
           currentPage,
           totalPages,
@@ -268,7 +287,7 @@ const getHighlightBannerByTagsAndStream = async (req, res) => {
       tags = [],
       stream,
     } = req.query;
-    
+
     const currentPage = parseInt(page);
     const itemsPerPage = parseInt(limit);
     const sortOptions = { [sortBy]: sortOrder === "desc" ? -1 : 1 };
