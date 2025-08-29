@@ -1,8 +1,6 @@
 const Admin = require("./admin.model");
 const Slug = require("./slug.model");
 const Meta = require("./meta.model");
-const Circular = require("./circular.model");
-const Departments = require("./department.model");
 const Faculty = require("./faculty.model");
 const Announcements = require("./announcement.model");
 const HighlightBanner = require("./highlightBanner.model");
@@ -22,8 +20,6 @@ module.exports = {
   Admin,
   Slug,
   Meta,
-  Circular,
-  Departments,
   Faculty,
   Announcements,
   HighlightBanner,

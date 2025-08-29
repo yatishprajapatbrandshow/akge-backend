@@ -1,5 +1,4 @@
-const { default: mongoose } = require("mongoose");
-const { Announcements, School } = require("../models");
+const { Announcements } = require("../models");
 
 const addAnnouncement = async (req, res) => {
   try {
@@ -82,7 +81,7 @@ const updateAnnouncement = async (req, res) => {
 
 const getAllAnnouncements = async (req, res) => {
   try {
-    const announcements = await Announcements.find().populate('stream').sort({ createdAt: -1 });
+    const announcements = await Announcements.find().sort({ createdAt: -1 });
     return res.status(200).json({
       status: true,
       message: "All announcements fetched successfully",
@@ -101,40 +100,20 @@ const getAllAnnouncementsByStream = async (req, res) => {
   try {
     const { stream } = req.query;
 
-    const query = {
-      status: true,
-    };
+    // base query (only active announcements)
+    const query = { status: true };
 
+    // if stream id is provided, add filter
     if (stream) {
-      const isValidObjectId = mongoose.Types.ObjectId.isValid(stream);
-      if (isValidObjectId) {
-        const streamExists = await School.exists({ _id: stream });
-        if (streamExists) {
-          query.stream = new mongoose.Types.ObjectId(stream);
-        } else {
-          // Don't filter by stream at all if invalid stream is provided
-          query.stream = null; // Will never match anything
-        }
-      } else {
-        // Invalid objectId format: also ensure nothing returns
-        query.stream = null;
-      }
-    } else {
-      // If no stream provided, fetch announcements with no stream
-      query.$or = [
-        { stream: { $exists: false } },
-        { stream: null },
-        { stream: "" },
-      ];
+      query.stream = stream;
     }
 
     const announcements = await Announcements.find(query)
-      // .populate("stream")
-      // .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 });
 
     return res.status(200).json({
       status: true,
-      message: "All announcements fetched successfully",
+      message: "Announcements fetched successfully",
       data: announcements,
     });
   } catch (error) {
@@ -146,6 +125,7 @@ const getAllAnnouncementsByStream = async (req, res) => {
     });
   }
 };
+
 
 
 const deleteAnnouncement = async (req, res) => {

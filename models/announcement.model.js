@@ -13,8 +13,7 @@ const announcementSchema = new mongoose.Schema(
       trim: true,
     },
     stream: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'School', // Name of the referenced model
+      type: String,
     },
     status: {
       type: Boolean,

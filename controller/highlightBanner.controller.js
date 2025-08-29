@@ -284,7 +284,7 @@ const getHighlightBannerByTagsAndStream = async (req, res) => {
       sortBy = "order",
       sortOrder = "asc",
       status = "true",
-      tags = [],
+      tags,
       stream,
     } = req.query;
 
@@ -292,30 +292,30 @@ const getHighlightBannerByTagsAndStream = async (req, res) => {
     const itemsPerPage = parseInt(limit);
     const sortOptions = { [sortBy]: sortOrder === "desc" ? -1 : 1 };
 
-    const query = {
-      deleteflag: false,
-    };
+    const query = { deleteflag: false };
 
     // Apply status (default: true)
     if (status !== "") {
       query.status = status === "true";
     }
 
-    // If stream is present
+    // If stream is present, filter by stream
     if (stream) {
       query.stream = stream;
     }
 
-    // If tags is present and an array
-    if (Array.isArray(tags) && tags.length > 0) {
-      query.tags = { $in: tags };
+    // Normalize tags into array (even if single string comes)
+    if (tags) {
+      const tagArray = Array.isArray(tags) ? tags : [tags];
+      if (tagArray.length > 0) {
+        query.tags = { $in: tagArray };
+      }
     }
 
     const totalItems = await HighlightBanner.countDocuments(query);
     const totalPages = Math.ceil(totalItems / itemsPerPage);
 
     const banners = await HighlightBanner.find(query)
-      .populate("stream")
       .sort(sortOptions)
       .skip((currentPage - 1) * itemsPerPage)
       .limit(itemsPerPage);
@@ -344,6 +344,7 @@ const getHighlightBannerByTagsAndStream = async (req, res) => {
     });
   }
 };
+
 module.exports = {
   addHighlightBanner,
   getHighlightBannerList,

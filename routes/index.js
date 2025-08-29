@@ -1,8 +1,6 @@
 const adminRouter = require("./admin.router");
 const slugRouter = require("./slug.router");
 const metaRouter = require("./meta.router");
-const circularRouter = require("./circular.router");
-const departmentRouter = require("./department.router");
 const facultyRouter = require("./faculty.router");
 const staticPageRouter = require("./staticPage.router");
 const announcementRouter = require("./announcements.router");
@@ -27,9 +25,7 @@ module.exports = {
   adminRouter,
   slugRouter,
   metaRouter,
-  circularRouter,
   editPathRouter,
-  departmentRouter,
   facultyRouter,
   staticPageRouter,
   announcementRouter,

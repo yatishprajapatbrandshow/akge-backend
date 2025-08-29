@@ -1,8 +1,6 @@
 const adminController = require("./admin.controller");
 const slugController = require("./slug.controller");
 const metaController = require("./meta.controller");
-const circularController = require("./circular.controller");
-const departmentController = require("./department.controller");
 const facultyController = require("./faculty.controller");
 const staticPageController = require("./staticPage.controller");
 const announcementController = require("./announcement.controller");
@@ -28,9 +26,7 @@ module.exports = {
   adminController,
   slugController,
   metaController,
-  circularController,
   editPathController,
-  departmentController,
   facultyController,
   staticPageController,
   announcementController,
